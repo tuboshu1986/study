@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>指令</title>
+    <script src="vue-plugin/Vue-2.6.10.js"></script>
+</head>
+<body>
+
+<div id="app-1">
+<a v-bind:href="url">搜索</a><button v-on:click="toggle">切换</button>
+</div>
+
+<script>
+
+    var urls = ["http://www.baidu.com", "http://www.google.com"];
+    var urlsIdxCounter = 1;
+    var app1 = new Vue({
+        el: "#app-1",
+        data:{
+            url: urls[0],
+        },
+        methods:{
+            toggle:function(){
+                this.$data.url = urls[(urlsIdxCounter++)%urls.length];
+            }
+        }
+    });
+</script>
+
+</body>
+</html>

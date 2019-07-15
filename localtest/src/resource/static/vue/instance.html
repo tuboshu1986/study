@@ -17,15 +17,27 @@
             message: "我是好人"
         };
 
-        Object.freeze(data)
+        //Object.freeze(data)
 
         var app = new Vue({
             el: "#app",
-            data:data
+            data:data,
+            created:function(){
+                console.log("created");
+            },
+            mounted:function(){
+                console.log("mounted");
+            },
+            updated:function(){
+                console.log("updated");
+            },
+            destroyed:function(){
+                console.log("destroyed");
+            }
         });
 
         app.$watch("message", function(newValue, oldValue){
-            alert(oldValue + "->" + newValue);
+            console.log(oldValue + "->" + newValue);
         });
     </script>
 

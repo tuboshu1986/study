@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>模板语法</title>
+    <script src="vue-plugin/Vue-2.6.10.js"></script>
+</head>
+<body>
+<p id="app1">{{message}}</p>
+<!--<p id="app1" v-once>{{message}}</p>-->
+<script>
+    var app1 = new Vue({
+        el: "#app1",
+        data:{
+            message:"aaaa"
+        }
+    });
+</script>
+
+<div id="app2">
+    <p>{{rowHTML}}</p>
+    <p v-html="rowHTML"></p>
+</div>
+
+<script>
+    var app2 = new Vue({
+        el: "#app2",
+        data : {
+            rowHTML: "<span style='color:red;'>我叫黄毛</span>"
+        }
+    });
+</script>
+
+<div id="app3">
+    <p v-bind:id="elId">aaaaaaa</p>
+    <p v-if="isShow">bbbbbbb</p>
+    <p v-bind:text="text"></p>
+</div>
+
+<script>
+    var app3 = new Vue({
+        el: "#app3",
+        data : {
+            elId: "element_",
+            isShow:false,
+            text:"床前明月光"
+        }
+    });
+</script>
+
+<div id="app4">
+    <p v-bind:id="elId">{{message.split("").reverse().join("-")}}</p>
+</div>
+
+<script>
+    var app4 = new Vue({
+        el: "#app4",
+        data : {
+            elId: "app4_p",
+            message:"床前明月光"
+        }
+    });
+</script>
+
+</body>
+
+</html>

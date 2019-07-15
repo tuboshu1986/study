@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>计算属性</title>
+    <script src="vue-plugin/Vue-2.6.10.js"></script>
+</head>
+<body>
+
+<div id="app">
+    <p>姓：<input v-model="lname"/></p>
+    <p>名：<input v-model="fname"/></p>
+    <p>姓名：{{fullname}}</p>
+</div>
+
+<script>
+    var app = new Vue({
+        el: "#app",
+        data: {
+            lname: "黄",
+            fname: "飞鸿"
+        },
+        computed:{
+            fullname : {
+                get:function(){
+                    return this.lname + this.fname;
+                },
+                set:function(val){
+                    console.log(val);
+                }
+            }
+        }
+    });
+</script>
+
+</body>
+</html>
