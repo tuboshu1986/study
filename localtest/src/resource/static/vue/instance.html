@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>实例</title>
+    <script src="vue-plugin/Vue-2.6.10.js"></script>
+</head>
+<body>
+
+    <div id="app">
+        <h3>{{message}}</h3>
+        <input v-model="message"/>
+    </div>
+
+    <script>
+        var data = {
+            message: "我是好人"
+        };
+
+        Object.freeze(data)
+
+        var app = new Vue({
+            el: "#app",
+            data:data
+        });
+
+        app.$watch("message", function(newValue, oldValue){
+            alert(oldValue + "->" + newValue);
+        });
+    </script>
+
+</body>
+</html>
