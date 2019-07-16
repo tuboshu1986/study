@@ -4,6 +4,8 @@
     <meta charset="UTF-8">
     <title>列表</title>
     <script src="../vue-plugin/Vue-2.6.10.js"></script>
+    <script src="jquery-1.8.2.min.js"></script>
+    <script src="../../js/global.js"></script>
     <style>
         #condition-opt{
             margin-top:10px;
@@ -22,35 +24,102 @@
             border-bottom: 1px solid #ccc;
             padding-bottom: 5px;
         }
+
+        .marker{
+            display:inline-block;
+            background-color:rgba(200, 200, 200, 0.3);
+            margin-right:5px;
+            border-radius:10px;
+            padding:3px 8px;
+        }
     </style>
 
-    <script></script>
+    <script>
+        $(function(){
+            var listData = null;
+            var listVueObj = null;
+
+            var conditions = [{
+                index:0,
+                question: "",
+                answer:"",
+                marker:"",
+                beginTime:"",
+                endTime:"",
+                answered:0,
+                isMain:0
+            }];
+            var conditionVueObj = new Vue({
+                el: "#condition-panel",
+                data: {
+                    conditions: conditions
+                },
+                updated:function(){
+                    console.log(this.conditions[0]);
+                }
+            });
+
+            function search(){
+                $.post(GlobalInfo.contextPath + "/vue/question/list", conditions, function(resp){
+                    console.log(resp);
+                });
+            }
+
+            function initData(data){
+                listData = data;
+                listVueObj = new Vue({
+                    el: "#data-list",
+                    data: {
+                        records: listData
+                    }
+                });
+            }
+
+            $.get(GlobalInfo.contextPath + "/vue/question/list", function(resp){
+                initData(resp);
+            });
+        });
+    </script>
 
 </head>
 <body>
 <div id="condition-panel">
     <div id="condition">
-        <div class="condition-item">
-            <label>标题：<input/></label>
-            <label>问题：<input/></label>
-            <label>标签：<input/></label>
-            <label>时间：<input type="date"/>-<input type="date"/></label>
-            <label>已答：<input type="checkbox" true-value="1" true-value="0"/></label>
-            <label>重点：<input type="checkbox" true-value="1" true-value="0"/></label>
+        <div v-for="conItem in conditions" class="condition-item" v-bind:key="conItem.index">
+            <label>问题：<input v-model="conItem.question"/></label>
+            <label>答案：<input v-model="conItem.answer"/></label>
+            <label>标签：<input v-model="conItem.marker"/></label>
+            <label>时间：<input v-model="conItem.beginTime" type="date"/>-<input v-model="conItem.endTime" type="date"/></label>
+            <label>状态：
+                <select v-model="conItem.answered">
+                    <option value="0">未指定</option>
+                    <option value="1">已有答案</option>
+                    <option value="2">没有答案</option>
+                </select>
+            <label>等级：
+                <select v-model="conItem.isMain">
+                    <option value="0">未指定</option>
+                    <option value="1">重要</option>
+                    <option value="2">不重要</option>
+                </select>
+            </label>
         </div>
     </div>
     <div id="condition-opt">
         <button>新增查询条件</button>
         <button>新增问题</button>
-        <button>查询数据</button>
+        <button onclick="search()">查询数据</button>
     </div>
 </div>
 
 <div id="data-list">
     <ol>
-        <li>asdasfda</li>
-        <li>asdasfda</li>
-        <li>asdasfda</li>
+        <li v-for="item in records">
+            <a target="_blank" :href="'/stu/vue/question/view/'+ item.id">{{item.content}}</a>
+            <p>
+                <span v-bind:class="{}" class="marker" v-for="marker in item.marker">{{marker.content}}</span>
+            </p>
+        </li>
     </ol>
 </div>
 
