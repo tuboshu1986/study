@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>事件处理</title>
+    <script src="vue-plugin/Vue-2.6.10.js"></script>
+</head>
+<body>
+<div id="example-1">
+    <button v-on:click="counter += 1">Add 1</button>
+    <p>The button above has been clicked {{ counter }} times.</p>
+</div>
+
+<script>
+    var example1 = new Vue({
+        el: '#example-1',
+        data: {
+            counter: 0
+        }
+    })
+</script>
+
+<button id="app_1" v-on:click="warn('Form cannot be submitted yet.', $event)">
+    Submit
+</button>
+
+<script>
+    var example1 = new Vue({
+        el: '#app_1',
+        methods: {
+            warn: function (message, event) {
+                if (event)
+                    event.preventDefault()
+                alert(message)
+            }
+        }
+    })
+</script>
+
+<div id="app-2">
+    <input v-on:keyup="submit">
+</div>
+
+<script>
+    var app2 = new Vue({
+        el: '#app-2',
+        methods: {
+            submit: function (event) {
+                console.log(event.keyCode)
+            }
+        }
+    })
+</script>
+
+</body>
+</html>
