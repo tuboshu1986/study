@@ -5,9 +5,11 @@ import com.hb.test.vue.ms.model.MSMarker;
 import com.hb.test.vue.ms.model.MSQuestion;
 import com.hb.test.vue.service.MSQuestionService;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class MSQuestionImpl<T> implements MSQuestionService {
@@ -15,6 +17,17 @@ public class MSQuestionImpl<T> implements MSQuestionService {
     @Override
     public List search(MSQuestion condition) {
         return Data.datas;
+    }
+
+    @Override
+    public List searchByMame(String name) {
+        if(StringUtils.isEmpty(name))
+            return Data.datas;
+        return Data.datas.stream().filter(item -> {
+            if(item.getContent().contains(name))
+                return true;
+            return false;
+        }).collect(Collectors.toList());
     }
 }
 
