@@ -6,107 +6,9 @@
     <script src="../vue-plugin/Vue-2.6.10.js"></script>
     <script src="jquery-1.8.2.min.js"></script>
     <script src="../../js/global.js"></script>
-    <style>
-        #condition-opt{
-            margin-top:10px;
-        }
-        .condition-item{
-            border:1px solid #ccc;
-            min-height:10px;
-        }
+    <script src="js/list.js"></script>
 
-        .condition-item label{
-            display: inline-block;
-            padding: 5px;
-        }
-
-        #condition-panel{
-            border-bottom: 1px solid #ccc;
-            padding-bottom: 5px;
-        }
-
-        .marker{
-            display:inline-block;
-            background-color:rgba(200, 200, 200, 0.3);
-            margin-right:5px;
-            border-radius:10px;
-            padding:3px 8px;
-        }
-    </style>
-
-    <script>
-
-        $(function(){
-            var listData = null;
-            var listVueObj = null;
-
-            var conditions = [{
-                index:0,
-                question: "",
-                answer:"",
-                marker:"",
-                beginTime:"",
-                endTime:"",
-                answered:0,
-                isMain:0
-            }];
-            var conditionVueObj = new Vue({
-                el: "#condition-panel",
-                data: {
-                    conditions: conditions
-                },
-                updated:function(){
-                    console.log(this.conditions[0]);
-                }
-            });
-
-            function initData(data){
-                listData = data;
-                listVueObj = new Vue({
-                    el: "#data-list",
-                    data: {
-                        records: listData
-                    }
-                });
-            }
-
-            function refreshData(data){
-                if(!data)
-                    return;
-                var len = listData.length;
-                for(var i = 0; i < len; i++){
-                    listData.pop();
-                }
-                for(var i = 0; i < data.length; i++){
-                    listData.push(data[i]);
-                }
-            }
-
-            $.get(GlobalInfo.contextPath + "/vue/question/list", function(resp){
-                initData(resp);
-
-                $("#condition-opt .search").click(function(){
-                    // $.post(GlobalInfo.contextPath + "/vue/question/list", conditions, function(data){
-                    //     console.log(data);
-                    // });
-                    $.ajax({
-                        type: "post",
-                        url: GlobalInfo.contextPath + "/vue/question/list",
-                        beforeSend: function(request) {
-                            request.setRequestHeader("Content-Type","application/json");
-                        },
-                        data: JSON.stringify(conditions),
-                        success: function(result) {
-                            console.log(result);
-                            refreshData(result);
-                        },
-                        dataType:"json"
-                    });
-                });
-            });
-        });
-    </script>
-
+    <link rel="stylesheet" href="css/list.css" type="text/css"/>
 </head>
 <body>
 <div id="condition-panel">
@@ -132,8 +34,8 @@
         </div>
     </div>
     <div id="condition-opt">
-        <button>新增查询条件</button>
-        <button>新增问题</button>
+        <button class="addcondition">新增查询条件</button>
+        <button class="toadd">新增问题</button>
         <button class="search">查询数据</button>
     </div>
 </div>
@@ -141,7 +43,7 @@
 <div id="data-list">
     <ol>
         <li v-for="item in records">
-            <a target="_blank" :href="'/stu/vue/question/view/'+ item.id">{{item.content}}</a>
+            <a target="_blank" href="javascript:void(0)" @click="view" v-bind:data-key="item.id">{{item.content}}</a>
             <p>
                 <span v-bind:class="{}" class="marker" v-for="marker in item.marker">{{marker.content}}</span>
             </p>
