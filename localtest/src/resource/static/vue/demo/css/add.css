@@ -1,0 +1,69 @@
+html, body{
+    padding:0px;
+    margin:0px;
+}
+
+body{
+    position: relative;
+}
+
+#add-panel{
+    border:1px solid #ccc;
+    width:800px;
+    height:500px;
+    position: absolute;
+    top:0;
+    left:0;
+    bottom:0;
+    right:0;
+    margin:auto;
+    padding-top: 20px;
+}
+
+.button-panel{
+    position: absolute;
+    width: 100%;
+    height: 50px;
+    bottom: 0px;
+    margin: 0px;
+    text-align: center;
+}
+
+.button-panel button{
+    margin-top: 15px;
+}
+
+.field-item{
+    padding-left: 10px;
+}
+
+.field-item textarea{
+    vertical-align: top;
+    width: calc(100% - 80px);
+}
+
+.field-item [name='question']{
+    height: 50px;
+}
+
+.field-item [name='answer']{
+    height: 250px;
+}
+
+.marker{
+    display: inline-block;
+    background-color: #ccc;
+    padding: 5px 20px;
+    border-radius: 15px;
+    margin-right:5px;
+    margin-bottom:3px;
+}
+
+.inline-input{
+    outline: none;
+    border: 1px solid #ccc;
+    vertical-align: top;
+    width: 100px;
+    height: 26px;
+    border-radius: 3px;
+}

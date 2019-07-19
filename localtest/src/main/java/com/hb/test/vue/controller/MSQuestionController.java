@@ -1,13 +1,18 @@
 package com.hb.test.vue.controller;
 
 import com.hb.test.vue.dto.QuestionDto;
+import com.hb.test.vue.ms.model.MSAnswer;
+import com.hb.test.vue.ms.model.MSMarker;
+import com.hb.test.vue.ms.model.MSQuestion;
 import com.hb.test.vue.service.MSQuestionService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.util.CollectionUtils;
+import org.springframework.util.StringUtils;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
+import java.util.List;
+import java.util.UUID;
 
 @RestController
 @RequestMapping("/vue/question")
@@ -21,4 +26,32 @@ public class MSQuestionController {
         System.out.println(cons);
         return msQuestionService.searchByMame(cons == null ? null : cons.get(0).getQuestion());
     }
+
+    @GetMapping("/{id}")
+    public Object get(@PathVariable("id") String id){
+        return msQuestionService.get(id);
+    }
+
+    @PostMapping
+    public Object post(String question, String answer, String markers){
+        try {
+            MSQuestion ques = new MSQuestion(null, question, null, null);
+            if(!StringUtils.isEmpty(markers)){
+                List<MSMarker> ms = new ArrayList<>();
+                for(String m : markers.split(","))
+                    ms.add(new MSMarker(UUID.randomUUID().toString(), m));
+                ques.setMarker(ms);
+            }
+            if(!StringUtils.isEmpty(answer)){
+                MSAnswer as = new MSAnswer(UUID.randomUUID().toString(), answer, null);
+                ques.setAnswers(CollectionUtils.arrayToList(new MSAnswer[]{as}));
+            }
+            msQuestionService.save(ques);
+        }catch (Exception e){
+            e.printStackTrace();
+            return "失败";
+        }
+        return "成功";
+    }
+
 }

@@ -3,8 +3,19 @@
 <head>
     <meta charset="UTF-8">
     <title>查看</title>
+    <script src="../vue-plugin/Vue-2.6.10.js"></script>
+    <script src="jquery-1.8.2.min.js"></script>
+    <script src="../../js/global.js"></script>
+
+    <script src="js/view.js"></script>
+    <link rel="stylesheet" href="css/view.css" type="text/css"/>
 </head>
 <body>
-
+<div id="data-view">
+    <p>{{record.content}}</p>
+    <div>
+    <p v-for="(item, index) in record.answers" v-bind:key="index">{{item.content}}</p>
+    </div>
+</div>
 </body>
 </html>

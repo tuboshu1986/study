@@ -9,6 +9,7 @@ import org.springframework.util.StringUtils;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Service
@@ -28,6 +29,21 @@ public class MSQuestionImpl<T> implements MSQuestionService {
                 return true;
             return false;
         }).collect(Collectors.toList());
+    }
+
+    @Override
+    public void save(MSQuestion obj) {
+        obj.setId(UUID.randomUUID().toString());
+        Data.datas.add(obj);
+    }
+
+    @Override
+    public MSQuestion get(String id) {
+        return Data.datas.stream().filter(item -> {
+            if(id.equals(item.getId()))
+                return true;
+            return false;
+        }).findFirst().get();
     }
 }
 

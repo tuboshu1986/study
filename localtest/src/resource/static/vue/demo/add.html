@@ -3,8 +3,30 @@
 <head>
     <meta charset="UTF-8">
     <title>新增</title>
+    <script src="../vue-plugin/Vue-2.6.10.js"></script>
+    <script src="jquery-1.8.2.min.js"></script>
+    <script src="../../js/global.js"></script>
+    <script src="js/add.js"></script>
+    <link rel="stylesheet" href="css/add.css" type="text/css"/>
 </head>
 <body>
-
+<div id="add-panel">
+    <p class="field-item"><label>问题：
+        <textarea v-model.trim="formdata.question" name="question"></textarea>
+    </label></p>
+    <p class="field-item"><label>
+        答案：
+        <textarea v-model.trim="formdata.answer" name="answer"></textarea>
+    </label></p>
+    <p class="field-item"><label>
+        标签：
+        <span class = "marker" v-for="(m, index) in formdata.markers" v-bind:key="index">{{m}}</span>
+        <input class="inline-input" v-on:keyup.13.trim="addMarker" v-model="inputMarker"/>
+    </label></p>
+    <p class="button-panel">
+        <button v-on:click="submit">新增</button>
+        <button v-on:click="reset">重置</button>
+    </p>
+</div>
 </body>
 </html>

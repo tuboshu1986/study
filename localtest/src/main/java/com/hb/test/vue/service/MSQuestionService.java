@@ -7,4 +7,6 @@ import java.util.List;
 public interface MSQuestionService<T extends MSQuestion> {
     List<T> search(MSQuestion condition);
     List<T> searchByMame(String name);
+    void save(MSQuestion obj);
+    MSQuestion get(String id);
 }
