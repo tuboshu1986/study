@@ -54,4 +54,20 @@ public class MSQuestionController {
         return "成功";
     }
 
+    @PostMapping("/addMarkerForQuestion")
+    public Object addMarkerForQuestion(String questionId, String markerContent){
+        return msQuestionService.addMarkerForQuestion(questionId, markerContent);
+    }
+
+    @PostMapping("/addMarkerForAnswer")
+    public Object addMarkerForAnswer(String answerId, String markerContent){
+        return msQuestionService.addMarkerForAnswer(answerId, markerContent);
+    }
+
+    @PostMapping("/addAnswerForQuestion")
+    public Object addAnswerForQuestion(String questionId, String answerContent){
+        MSAnswer an = new MSAnswer(null, answerContent, null);
+        an.setQuestionId(questionId);
+        return msQuestionService.addAnswer(an);
+    }
 }

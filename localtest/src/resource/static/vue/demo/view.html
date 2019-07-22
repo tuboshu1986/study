@@ -12,9 +12,28 @@
 </head>
 <body>
 <div id="data-view">
-    <p>{{record.content}}</p>
-    <div>
-    <p v-for="(item, index) in record.answers" v-bind:key="index">{{item.content}}</p>
+    <div id="data-question">
+        <p class="question">{{record.content}}</p>
+        <p>
+            <label class="marker" v-for="(item, index) in record.marker" v-bind:key="index">{{item.content}}</label>
+        </p>
+        <p class="operation">
+            <a href="javascript:void(0);" onclick="addAnswerForQuestion()">新增答案</a>
+            <a href="javascript:void(0);" onclick="addMarkerForQuestion()">新增标签</a>
+        </p>
+    </div>
+    <div id="data-answer">
+        <template v-for="(item, index) in record.answers">
+            <div class="answer" v-bind:key="index">
+                <div class="content">{{item.content}}</div>
+                <div class="markers">
+                    <label class="marker" v-for="(marker, mindex) in item.markers" v-bind:key="mindex">{{marker.content}}</label>
+                </div>
+                <p class="operation">
+                    <a href="javascript:void(0);" v-bind:onclick="'addMarkerForAnswer(\'' + item.id + '\')'">新增标签</a>
+                </p>
+            </div>
+        </template>
     </div>
 </div>
 </body>

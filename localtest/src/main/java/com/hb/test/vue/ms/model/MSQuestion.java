@@ -1,13 +1,14 @@
 package com.hb.test.vue.ms.model;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class MSQuestion {
     private String id;
     private String content;
 
-    private List<MSAnswer> answers;
-    private List<MSMarker> marker;
+    private List<MSAnswer> answers = new ArrayList<>();
+    private List<MSMarker> marker = new ArrayList<>();
 
     public MSQuestion(){
 
@@ -16,8 +17,10 @@ public class MSQuestion {
     public MSQuestion(String id, String content, List<MSAnswer> answers, List<MSMarker> marker) {
         this.id = id;
         this.content = content;
-        this.answers = answers;
-        this.marker = marker;
+        if(answers != null)
+            this.answers = answers;
+        if(marker != null)
+            this.marker = marker;
     }
 
     @Override

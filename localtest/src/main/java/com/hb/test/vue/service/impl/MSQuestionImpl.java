@@ -5,10 +5,12 @@ import com.hb.test.vue.ms.model.MSMarker;
 import com.hb.test.vue.ms.model.MSQuestion;
 import com.hb.test.vue.service.MSQuestionService;
 import org.springframework.stereotype.Service;
+import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
@@ -44,6 +46,61 @@ public class MSQuestionImpl<T> implements MSQuestionService {
                 return true;
             return false;
         }).findFirst().get();
+    }
+
+    @Override
+    public MSAnswer addAnswer(MSAnswer answer) {
+        answer.setId(UUID.randomUUID().toString());
+        Optional<MSQuestion> opt = Data.datas.stream().filter(item ->{
+            if(item.getId().equals(answer.getQuestionId())){
+                return true;
+            }
+            return false;
+        }).findFirst();
+        if(opt.isPresent())
+            opt.get().getAnswers().add(answer);
+        return answer;
+    }
+
+    @Override
+    public MSMarker addMarkerForQuestion(String questionId, String markerContent) {
+        Optional<MSQuestion> opt = Data.datas.stream().filter(item ->{
+            if(item.getId().equals(questionId)){
+                return true;
+            }
+            return false;
+        }).findFirst();
+        if(opt.isPresent()) {
+            MSMarker marker = new MSMarker(UUID.randomUUID().toString(), markerContent);
+            opt.get().getMarker().add(marker);
+            return marker;
+        }
+        return null;
+    }
+
+    @Override
+    public MSMarker addMarkerForAnswer(String answerId, String markerContent) {
+        MSAnswer answer = null;
+        for(MSQuestion item : Data.datas){
+            if(!CollectionUtils.isEmpty(item.getAnswers())){
+                Optional<MSAnswer> opt = item.getAnswers().stream().filter(an -> {
+                    if(an.getId().equals(answerId)){
+                        return true;
+                    }
+                    return false;
+                }).findFirst();
+                if(opt.isPresent()) {
+                    answer = opt.get();
+                    break;
+                }
+            }
+        }
+        if(answer != null) {
+            MSMarker marker = new MSMarker(UUID.randomUUID().toString(), markerContent);
+            answer.getMarkers().add(marker);
+            return marker;
+        }
+        return null;
     }
 }
 

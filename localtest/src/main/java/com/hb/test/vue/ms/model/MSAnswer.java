@@ -1,21 +1,29 @@
 package com.hb.test.vue.ms.model;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class MSAnswer {
     private String id;
     private String content;
 
-    private List<MSMarker> markers;
+    private String questionId;
+
+    private List<MSMarker> markers = new ArrayList<>();
 
     public MSAnswer(){
 
     }
 
+    public MSAnswer(List<MSMarker> markers){
+        this.markers = markers;
+    }
+
     public MSAnswer(String id, String content, List<MSMarker> markers) {
         this.id = id;
         this.content = content;
-        this.markers = markers;
+        if(markers != null)
+            this.markers = markers;
     }
 
     @Override
@@ -25,6 +33,14 @@ public class MSAnswer {
                 ", content='" + content + '\'' +
                 ", markers=" + markers +
                 '}';
+    }
+
+    public String getQuestionId() {
+        return questionId;
+    }
+
+    public void setQuestionId(String questionId) {
+        this.questionId = questionId;
     }
 
     public String getId() {
