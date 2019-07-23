@@ -1,11 +1,25 @@
 package com.hb.test.student.model;
 
+import javax.persistence.*;
+
+/**
+ * 班级
+ */
+@Entity
+@Table(name = "stu_class")
 public class StuClass extends BaseModel {
+    @Column(name = "code", nullable = false)
     private String code;
+    @Column(name = "name", nullable = false)
     private String name;
-    private String position;
+    @Column(name = "remark")
     private String remark;
+    @ManyToOne
+    @JoinColumn(name = "stu_class_grade_id", referencedColumnName = "id")
     private Grade grade;
+    @OneToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH})
+    @JoinColumn(name = "stu_class_position_id", referencedColumnName = "id")
+    private Position position;
 
     public String getCode() {
         return code;
@@ -23,11 +37,11 @@ public class StuClass extends BaseModel {
         this.name = name;
     }
 
-    public String getPosition() {
+    public Position getPosition() {
         return position;
     }
 
-    public void setPosition(String position) {
+    public void setPosition(Position position) {
         this.position = position;
     }
 

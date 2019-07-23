@@ -1,16 +1,33 @@
 package com.hb.test.student.model;
 
+import com.hb.test.student.dao.listener.BaseListener;
+
+import javax.persistence.*;
+import java.io.Serializable;
 import java.util.Date;
 
-public class BaseModel {
+@MappedSuperclass
+@EntityListeners({BaseListener.class})
+public class BaseModel implements Serializable {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id", nullable = false)
     private Integer id;
-    private String createById;
+    @Column(name = "create_by_id", nullable = false, updatable = false)
+    private Integer createById;
+    @Column(name = "create_by_name", nullable = false, updatable = false)
     private String createByName;
+    @Column(name = "create_time", nullable = false, updatable = false)
     private Date createTime;
-    private String updateById;
+    @Column(name = "update_by_id", nullable = false)
+    private Integer updateById;
+    @Column(name = "update_by_name", nullable = false)
     private String updateByName;
+    @Column(name = "update_time", nullable = false)
     private Date updateTime;
+    @Column(name = "status")
     private String status;
+    @Column(name = "version")
     private Integer version;
 
     public Integer getId() {
@@ -21,14 +38,6 @@ public class BaseModel {
         this.id = id;
     }
 
-    public String getCreateById() {
-        return createById;
-    }
-
-    public void setCreateById(String createById) {
-        this.createById = createById;
-    }
-
     public String getCreateByName() {
         return createByName;
     }
@@ -37,11 +46,19 @@ public class BaseModel {
         this.createByName = createByName;
     }
 
-    public String getUpdateById() {
+    public Integer getCreateById() {
+        return createById;
+    }
+
+    public void setCreateById(Integer createById) {
+        this.createById = createById;
+    }
+
+    public Integer getUpdateById() {
         return updateById;
     }
 
-    public void setUpdateById(String updateById) {
+    public void setUpdateById(Integer updateById) {
         this.updateById = updateById;
     }
 

@@ -1,10 +1,22 @@
 package com.hb.test.student.model;
 
+import javax.persistence.*;
+
+/**
+ * 位置信息
+ */
+@Entity
+@Table(name = "position")
 public class Position extends BaseModel {
+    @Column(name = "code", nullable = false)
     private String code;
+    @Column(name = "name", nullable = false)
     private String name;
+    @Column(name = "address")
     private String address;
+    @Column(name = "located")
     private String located;
+    @OneToOne(mappedBy = "position")
     private StuClass stuClass;
 
     public String getCode() {
