@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>位置</title>
+    <link href="/css/data.css" rel="stylesheet" type="text/css"/>
+</head>
+<#if beandData ??>
+<form>
+    <div class="data-model">
+        <p class="item"><label class="field-title">code: </label><input value="${beandData.code}" class="field-input"/></p>
+        <p class="item"><label class="field-title">name: </label><input value="${beandData.name}" class="field-input"/></p>
+        <p class="item"><label class="field-title">address: </label><input value="${beandData.address}" class="field-input"/></p>
+        <p class="item"><label class="field-title">located: </label><input value="${beandData.located}" class="field-input"/></p>
+    </div>
+    <div class="data-operation">
+        <#if (beandOptType??) && (beandOptType != 'VIEW')>
+            <#if beandOptType == 'ADD'>
+                <button>新增</button>
+            <#elseif beandOptType == 'UPDATE'>
+                 <button>修改</button>
+            </#if>
+        </#if>
+
+        <input type="button" value="关闭"/>
+        <input type="reset" value="重置"/>
+    </div>
+</form>
+<#else>
+<div class="error-message">无数据</div>
+</#if>
+</body>
+</html>
