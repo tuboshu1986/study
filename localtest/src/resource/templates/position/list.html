@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>位置-列表</title>
+    <link href="/css/data.css" rel="stylesheet" type="text/css"/>
+</head>
+<body>
+
+<#include "../header.html">
+<#include "../menu.html">
+
+<form action="/position/page">
+<div class="data-body">
+    <div class="data-operation-panel">
+        <div class="data-list-conditional">
+            <label>名称:<input /></label>
+        </div>
+        <div class="data-list-operation">
+            <label><input type="submit" value="搜索" /></label>
+            <a href="/position/model/ADD" target="_blank">新增</a>
+        </div>
+    </div>
+<#if pageData.hasData>
+    <div class="data-list">
+        <table class="data-table" border="1px" cellspacing="0">
+            <thead>
+                <tr>
+                    <th>操作</th>
+                    <th>代码</th>
+                    <th>名称</th>
+                    <th>地址</th>
+                    <th>状态</th>
+                </tr>
+            </thead>
+            <tbody>
+                <#list pageData.content as item>
+                <tr>
+                    <td>
+                        <a href="/position/${item.id}" target="_blank">查看</a>
+                        <a href="/position/model/${item.id}/UPDATE" target="_blank">修改</a>
+                    </td>
+                    <td>${item.code}</td>
+                    <td>${item.name}</td>
+                    <td>${item.address}</td>
+                    <td>${item.located}</td>
+                </tr>
+                </#list>
+            </tbody>
+        </table>
+
+        <#include "../page.html">
+
+    </div>
+<#else>
+    <div class="error-message">
+    无数据
+    </div>
+</#if>
+</div>
+</form>
+
+<#include "../footer.html">
+
+</body>
+</html>

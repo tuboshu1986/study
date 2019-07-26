@@ -17,9 +17,16 @@ public class StuClass extends BaseModel {
     @ManyToOne
     @JoinColumn(name = "stu_class_grade_id", referencedColumnName = "id")
     private Grade grade;
-    @OneToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH})
+    @OneToOne(cascade = {CascadeType.ALL})
     @JoinColumn(name = "stu_class_position_id", referencedColumnName = "id")
     private Position position;
+
+    public StuClass() {
+    }
+
+    public StuClass(Integer id) {
+        setId(id);
+    }
 
     public String getCode() {
         return code;

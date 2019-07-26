@@ -25,4 +25,9 @@ public class PositionController<T extends Position, K extends Integer> extends B
     public String pre() {
         return "position";
     }
+
+    @Override
+    public Object emptyBean() {
+        return new Position();
+    }
 }

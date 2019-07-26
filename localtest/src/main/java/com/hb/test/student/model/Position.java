@@ -16,8 +16,15 @@ public class Position extends BaseModel {
     private String address;
     @Column(name = "located")
     private String located;
-    @OneToOne(mappedBy = "position")
+    @OneToOne(mappedBy = "position", cascade = CascadeType.DETACH)
     private StuClass stuClass;
+
+    public Position() {
+    }
+
+    public Position(Integer id) {
+        setId(id);
+    }
 
     public String getCode() {
         return code;

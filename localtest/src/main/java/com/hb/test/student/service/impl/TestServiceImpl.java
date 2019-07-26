@@ -83,4 +83,8 @@ public class TestServiceImpl {
         stuClassService.delete(2);
     }
 
+    public void detatch(){
+        positionService.delete(2);
+    }
+
 }
