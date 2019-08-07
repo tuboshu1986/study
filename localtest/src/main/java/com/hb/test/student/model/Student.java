@@ -1,5 +1,7 @@
 package com.hb.test.student.model;
 
+import org.hibernate.annotations.Where;
+
 import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.Date;
@@ -24,12 +26,38 @@ public class Student extends BaseModel {
     private String email;
     @Column(name = "phone")
     private String phone;
+
     @ManyToMany
     @JoinTable(name = "student_course",
             joinColumns = @JoinColumn(name = "student_id", referencedColumnName = "id"),
             inverseJoinColumns = @JoinColumn(name = "course_id", referencedColumnName = "id")
     )
+
     private List<Course> coureses = new ArrayList<>();
+
+    @OneToMany(mappedBy = "studentId", fetch = FetchType.LAZY)
+    @Where(clause = "status = 1 and update_by_id = 100")
+    private List<Test> tests = new ArrayList<>();
+
+    @OneToMany(mappedBy = "studentId", fetch = FetchType.LAZY)
+    @Where(clause = "status = 2")
+    private List<Test> tests1 = new ArrayList<>();
+
+    public List<Test> getTests() {
+        return tests;
+    }
+
+    public void setTests(List<Test> tests) {
+        this.tests = tests;
+    }
+
+    public List<Test> getTests1() {
+        return tests1;
+    }
+
+    public void setTests1(List<Test> tests1) {
+        this.tests1 = tests1;
+    }
 
     public String getName() {
         return name;

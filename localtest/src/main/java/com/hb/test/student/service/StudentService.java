@@ -1,4 +1,6 @@
 package com.hb.test.student.service;
 
-public interface StudentService {
+import com.hb.test.student.model.Student;
+
+public interface StudentService extends BaseService<Student, Integer>  {
 }

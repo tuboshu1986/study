@@ -1,5 +1,8 @@
 package com.hb.test.student.model;
 
+import org.hibernate.annotations.SQLDelete;
+import org.hibernate.annotations.Where;
+
 import javax.persistence.*;
 
 /**
@@ -7,6 +10,8 @@ import javax.persistence.*;
  */
 @Entity
 @Table(name = "stu_class")
+@SQLDelete(sql = "update stu_class set status = 2 where id = ?")
+@Where(clause = "status = 1")
 public class StuClass extends BaseModel {
     @Column(name = "code", nullable = false)
     private String code;

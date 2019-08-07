@@ -1,5 +1,7 @@
 package com.hb.test.student.model;
 
+import org.hibernate.annotations.Where;
+
 import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -15,6 +17,7 @@ public class Grade extends BaseModel {
     @Column(name = "remark")
     private String remark;
     @OneToMany(mappedBy = "grade", cascade = CascadeType.ALL)
+    @Where(clause = "status = 1 and code='a_2'")
     private List<StuClass> classes = new ArrayList<>();
 
     public String getName() {
