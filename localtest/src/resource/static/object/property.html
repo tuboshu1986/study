@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Object.defineProperty()</title>
+</head>
+<body>
+
+<script>
+    var obj = {
+        a: 1,
+        b:"123"
+    };
+
+    for(key in obj){
+        console.log(key + "-" + obj[key]);
+    }
+
+    console.log(">>>>设置a01");
+    Object.defineProperty(obj, "a01", {
+        value:"001",
+        writable:false
+    });
+
+    console.log(">>>>显示a01");
+    console.log(obj.a01);
+
+    console.log(">>>>迭代a01");
+    for(key in obj){
+        console.log(key + "-" + obj[key]);
+    }
+
+    console.log(">>>>修改a01的值");
+    obj.a01 = "002";
+    console.log(obj.a01);
+
+</script>
+
+</body>
+</html>
