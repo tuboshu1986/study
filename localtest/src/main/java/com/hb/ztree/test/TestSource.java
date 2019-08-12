@@ -1,0 +1,25 @@
+package com.hb.ztree.test;
+
+import com.hb.ztree.Item;
+import com.hb.ztree.TreeDataSource;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import java.util.ArrayList;
+import java.util.List;
+
+@Service
+public class TestSource implements TreeDataSource {
+
+    @Autowired
+    private TestDao testDao;
+
+    @Override
+    public List<Item> getData() {
+        List<Item> rst = new ArrayList<>();
+        testDao.findAll().forEach(t -> {
+            rst.add(new Item(t.getId().toString(), t.getParentId() == null ? null : t.getParentId().toString(), t.getName()));
+        });
+        return rst;
+    }
+}
