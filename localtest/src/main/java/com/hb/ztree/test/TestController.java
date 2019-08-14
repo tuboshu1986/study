@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import java.util.Date;
 
 /**
- * 测试controller
+ * 测试controller型
  */
 @Controller
 @RequestMapping("/test")

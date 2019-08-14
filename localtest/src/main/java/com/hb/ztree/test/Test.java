@@ -3,9 +3,6 @@ package com.hb.ztree.test;
 import javax.persistence.*;
 import java.util.Date;
 
-/**
- * 测试类
- */
 @Entity
 @Table(name = "test_table")
 public class Test {
