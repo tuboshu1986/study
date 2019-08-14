@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>标签</title>
+</head>
+<body>
+
+<fieldset>
+    <legend>meter</legend>
+    <meter value="75" min="5" max="100" low="0" high="100"></meter>
+</fieldset>
+
+<fieldset>
+    <legend>dialog</legend>
+
+    <button onclick="document.getElementById('my_dialog').show()">打开对话框</button>
+
+    <button onclick="document.getElementById('my_dialog').showModal()">打开模式对话框</button>
+
+    <dialog id="my_dialog" style="border:1px solid red;">
+        我的世界
+        <p>
+            <button onclick="document.getElementById('my_dialog').close()">关闭</button>
+        </p>
+    </dialog>
+
+</fieldset>
+
+</body>
+</html>
