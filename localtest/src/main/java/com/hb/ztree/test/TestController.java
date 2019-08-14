@@ -10,6 +10,9 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import java.util.Date;
 
+/**
+ * 测试controller
+ */
 @Controller
 @RequestMapping("/test")
 public class TestController {
