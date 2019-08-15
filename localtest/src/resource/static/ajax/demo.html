@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>异步 JavaScript 和 XML</title>
+    <script type="text/javascript" src="../plugin/Vue.js v2.6.10.js"></script>
+</head>
+<body>
+    <div id="body">
+        <p>
+            <form id="form">
+                <input v-model="inputVal" required/>
+                <input onclick="send()" type="button" value="发送"/>
+            </form>
+        </p>
+        <ol id="ol">
+            <li v-for="m in messages">
+                {{m}}
+            </li>
+        </ol>
+    </div>
+
+    <script>
+        var vueObj = new Vue({
+            el: "#body",
+            data:{
+                messages:["aaaa"],
+                inputVal:""
+            }
+        });
+        var vueData = vueObj.$data;
+
+        function send(){
+            if(document.getElementById("form").checkValidity()){
+                ajaxSend(vueData.inputVal);
+            }else{
+                alert("输入点什么");
+            }
+        }
+
+        function ajaxSend(str){
+            var xmlHttpRequest = new XMLHttpRequest();
+            xmlHttpRequest.open("post", "/message", true);
+            xmlHttpRequest.onerror = function(e){
+                alert("出现错误");
+                console.error(e);
+            };
+
+            xmlHttpRequest.onprogress = function(e){
+                console.log(e);
+            };
+
+            xmlHttpRequest.onreadystatechange = function(){
+                if(this.status == 200 && this.readyState == 4){
+                    vueData.messages.push(xmlHttpRequest.responseText);
+                }
+            };
+
+            var form = new FormData();
+            form.append("msg", str);
+            xmlHttpRequest.send(form);
+        }
+
+    </script>
+</body>
+</html>
