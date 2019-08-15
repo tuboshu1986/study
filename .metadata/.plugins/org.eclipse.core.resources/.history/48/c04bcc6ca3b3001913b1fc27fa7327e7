@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>tree</title>
+<link rel="stylesheet" href="/plugins/layui/css/layui.css">
+<script src="/plugins/layui/layui.all.js"></script>
+<script src="/plugins/layui/jquery.js"></script>
+<script src="data.js"></script>
+</head>
+<body>
+
+<div>
+	<button>弹出</button>
+</div>
+
+<div id="test12" class="demo-tree-more"></div>
+
+<script type="text/javascript">
+	var tree = layui.tree;
+	tree.render({
+	    elem: '#test12',
+	    data: data,
+	    showCheckbox: true,  //是否显示复选框,
+	    id: 'demoId1',
+	    isJump: true, //是否允许点击节点时弹出新窗口跳转,
+	    click: function(obj){
+	      var data = obj.data;  //获取当前点击的节点数据
+	      layer.msg('状态：'+ obj.state + '<br>节点数据：' + JSON.stringify(data));
+	    }
+	});
+</script>
+</body>
+</html>

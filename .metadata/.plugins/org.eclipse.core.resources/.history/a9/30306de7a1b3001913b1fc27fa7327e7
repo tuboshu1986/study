@@ -1,0 +1,14 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>tree</title>
+<link rel="stylesheet" href="/plugins/layui/css/layui.css">
+<script src="/plugins/layui/layui.js"></script>
+</head>
+<body>
+
+<div id="test12" class="demo-tree-more"></div>
+<script type="text/javascript"></script>
+</body>
+</html>

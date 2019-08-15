@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>编辑数据</title>
+    <script type="text/javascript" src="../../global/zTree_v3/js/jquery-1.4.4.min.js"></script>
+    <script>
+        function mySubmit(){
+            var form = document.getElementById("form");
+            if(!form.checkValidity()){
+                alert("输入必要的数据");
+                return;
+            }
+
+            var params = $("#form").serialize();
+            $.get("/test/add?" + params, function(resp){
+                resp = JSON.parse(resp);
+                console.log(resp);
+                if(resp.code == "200"){
+                    alert(resp.message);
+                    window.close();
+                    return;
+                }
+                alert(resp.message);
+            });
+        }
+    </script>
+
+    <style>
+        .title{
+            display:inline-block;
+            width:100px;
+        }
+    </style>
+
+</head>
+<body>
+
+<form id="form" action="/test/add">
+    <p>
+        <span class="title">系统名称：</span>
+        <label><input name="mokoSysUrlId" value="1" type="radio"/>ruby erp</label>
+        <label><input name="mokoSysUrlId" checked value="2" type="radio"/>java erp</label>
+    </p>
+    <p>
+        <span class="title">父级菜单：</span>
+        <input id="parentName" type="text"/>
+        <input id="parentId" name="parentId" type="hidden"/>
+    </p>
+    <p>
+        <span class="title">菜单名称：</span>
+        <label><input required name="name" type="text"/></label>
+    </p>
+    <p>
+        <span class="title">菜单链接：</span>
+        <label><input name="url" type="text"/></label>
+    </p>
+    <p>
+        <span class="title">备注：</span>
+        <label><input name="remark" type="text"/></label>
+    </p>
+    <p>
+        <span class="title">排序：</span>
+        <label><input name="sort" type="number"/></label>
+    </p>
+    <p>
+        <span class="title">状态：</span>
+        <label><input name="status" value="1" checked type="radio"/>显示</label>
+        <label><input name="status" value="2" type="radio"/>隐藏</label>
+    </p>
+    <p>
+        <span class="title">类型：</span>
+        <label><input name="menuType" value="1" type="radio"/>菜单</label>
+        <label><input name="menuType" value="2" checked type="radio"/>按钮</label>
+    </p>
+    <p>
+        <span class="title">权限：</span>
+        <label><input name="permission" type="text"/></label>
+    </p>
+    <p>
+        <input type="button" onclick="mySubmit()" value="提交"/>
+    </p>
+</form>
+
+<script>
+
+    function clearCache(){
+        window.localStorage.removeItem("pid");
+        window.localStorage.removeItem("pname");
+        window.localStorage.removeItem("id");
+    }
+
+    function setParams(params){
+        $("#form input").each(function(i, item){
+            if($(item).is("[type='text']") || $(item).is("[type='number']")){
+                if($(item).attr("id") == "parentName"){
+                    $(item).val(params.parent.name);
+                    return;
+                }
+                $(item).val(params[$(item).attr("name")]);
+            }else if($(item).is("[type='radio']") && $(item).val() == params[$(item).attr("name")]){
+                $(item).attr("checked", "checked");
+            }
+        });
+    }
+
+    var pid = window.localStorage.getItem("pid");
+    var pname = window.localStorage.getItem("pname");
+    var id = window.localStorage.getItem("id");
+    if(id){
+        $.get("/test/get?id=" + id, function(obj){
+            setParams(obj);
+            clearCache();
+        }, "json");
+    }else if(pid){
+        document.getElementById("parentId").value=pid;
+        document.getElementById("parentName").value=pname;
+        clearCache();
+    }
+</script>
+
+</body>
+</html>
