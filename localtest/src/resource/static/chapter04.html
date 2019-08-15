@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>新增/改良的元素和属性</title>
+</head>
+<body>
+
+
+    <fieldset>
+        <legend>requireds属性</legend>
+        <form id="form1">
+            <p><input required/></p>
+            <p><button>提交</button></p>
+            <p><input onclick="console.log(document.getElementById('form1').checkValidity())" value="校验" type="button"/></p>
+        </form>
+    </fieldset>
+
+    <fieldset>
+        <legend>pattern属性</legend>
+        <form id="form2">
+            <p><input required pattern="^\d{1,}S$"/></p>
+            <p><button>提交</button></p>
+        </form>
+    </fieldset>
+
+    <fieldset>
+        <legend>indeterminate属性</legend>
+        <form id="form3">
+            <p><input type="checkbox" indeterminate="true"/>我的世界</p>
+        </form>
+    </fieldset>
+
+    <fieldset>
+        <legend>list属性</legend>
+        <input list="datalist"/>
+        <datalist onautocomplete="off" id="datalist">
+            <option value="aaasdfsd"></option>
+            <option value="aaafdgdfhd"></option>
+            <option value="aaasdfsdf"></option>
+            <option value="aaaujhtykmjh"></option>
+        </datalist>
+    </fieldset>
+
+    <fieldset>
+        <legend>type属性</legend>
+        <form id="form4">
+            <p>search<input required type="search"/></p>
+            <p>电话<input required type="tel"/></p>
+            <p>url<input required type="url"/></p>
+            <p>color<input id="form4-color" required type="color"/></p>
+            <p>datetime-local<input required type="datetime-local"/></p>
+            <p><button>提交</button></p>
+        </form>
+    </fieldset>
+
+    <fieldset>
+        <legend>progress元素</legend>
+        <p><progress></progress></p>
+        <p><progress value="30"></progress></p>
+    </fieldset>
+
+    <fieldset>
+        <legend>meter元素</legend>
+        <p><meter value="23" optimum="50" max="100" min="0"/></p>
+        <p><meter value="50" optimum="50" max="100" min="0"/></p>
+        <p><meter>30%</meter></p>
+        <p><meter>3/5</meter></p>
+    </fieldset>
+
+    <fieldset>
+        <legend>a元素</legend>
+        <p><a href="image/Men_s_Boots_1127px_1235576_easyicon.net.png" download="我的鞋子">鞋子</a></p>
+    </fieldset>
+
+
+</body>
+</html>

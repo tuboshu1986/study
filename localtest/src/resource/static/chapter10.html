@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>文件 API</title>
+    <script type="text/javascript" src="plugin/Vue.js v2.6.10.js"></script>
+</head>
+<body>
+
+
+    <fieldset id="fieldset01">
+        <legend>显示文件名称</legend>
+        <input accept="image/*" id="fieldset01-file" onchange="fieldset01Selected();" type="file" multiple/>
+        <div>
+            <p v-for="name in names">
+                {{name}}
+            </p>
+        </div>
+    </fieldset>
+    <script>
+        var fieldset01Vue = new Vue({
+            el: "#fieldset01",
+            data:{
+                names:[]
+            }
+        });
+
+        function fieldset01Selected(){
+            var fileInput = event.target;
+            fieldset01Vue.$data.names.splice(0, fieldset01Vue.$data.names.length);
+            for(var i=0;i<fileInput.files.length;i++){
+                var item = fileInput.files[i];
+                fieldset01Vue.$data.names.push(item.name +
+                    "[" + item.lastModifiedDate.toLocaleString() + "]" +
+                    "[" + item.size + "]" +
+                    "[" + item.type + "]");
+            }
+        }
+    </script>
+
+
+
+    <fieldset id="fieldset02">
+        <legend>【Blob】下载输入的文字</legend>
+        <textarea v-model="text" style="width:500px;height:100px;"></textarea>
+        <P>
+            <button @click="create">生成</button>
+            <a :href="downloadUrl" v-show="downloadUrl" download="我的日记">下载</a>
+        </P>
+    </fieldset>
+    <script>
+        var fieldset01Vue = new Vue({
+            el: "#fieldset02",
+            data:{
+                text:"",
+                downloadUrl:""
+            },
+            methods:{
+                create:function(){
+                    var b = new Blob([this.text]);
+                    this.downloadUrl = window.webkitURL.createObjectURL(b);
+                }
+            }
+        });
+    </script>
+
+
+    <fieldset id="fieldset03">
+        <legend>【FileReader】显示图片</legend>
+        <input @change="show" type="file" multiple/>
+        <p>
+            <span v-for="url in picDataUrls">
+                <img :src="url" style="width:100px;"/>
+            </span>
+        </p>
+    </fieldset>
+    <script>
+        var fieldset03Vue = new Vue({
+            el: "#fieldset03",
+            data:{
+                picDataUrls:[]
+            },
+            methods:{
+                show:function(){
+                    this.picDataUrls.splice(0, this.picDataUrls.length);
+                    var files = event.target.files;
+                    for(var i=0;i<files.length;i++){
+                        var f = files[i];
+                        var fileReader = new FileReader();
+                        fileReader.readAsDataURL(f);
+                        fileReader.onload = function(){
+                            fieldset03Vue.$data.picDataUrls.push(this.result);
+                        };
+                    }
+                }
+            }
+        });
+    </script>
+
+    <fieldset id="fieldset04">
+        <legend>【FileReader】加载文本</legend>
+        <input @change="show" type="file" multiple/>
+        <p>
+            {{text}}
+        </p>
+    </fieldset>
+    <script>
+        var fieldset04Vue = new Vue({
+            el: "#fieldset04",
+            data:{
+                text:""
+            },
+            methods:{
+                show:function(){
+                    this.text = "";
+                    var files = event.target.files;
+                    for(var i=0;i<files.length;i++){
+                        var f = files[i];
+                        var fileReader = new FileReader();
+                        fileReader.readAsText(f);
+                        fileReader.onload = function(){
+                            fieldset03Vue.$data.text += (this.result) + "\r\n";
+                        };
+                    }
+                }
+            }
+        });
+    </script>
+
+    <fieldset id="fieldset05">
+        <legend>【FileReader】加载进度</legend>
+        <input @change="show" type="file"/>
+        <p>
+            <img :src="url" style="width:200px;"/>
+        </p>
+    </fieldset>
+    <script>
+        var fieldset05Vue = new Vue({
+            el: "#fieldset05",
+            data:{
+                url:""
+            },
+            methods:{
+                show:function(){
+                    var files = event.target.files;
+                    for(var i=0;i<files.length;i++){
+                        var f = files[i];
+                        var fileReader = new FileReader();
+                        fileReader.readAsDataURL(f);
+                        fileReader.onload = function(){
+                            fieldset05Vue.$data.url = this.result;
+                        };
+                        fileReader.onprogress = function(){
+                            console.log(">>>>progress");
+                        };
+                    }
+                }
+            }
+        });
+    </script>
+
+
+
+    <fieldset id="fieldset06">
+        <legend>【btoa】Base64</legend>
+        <input @change="show" type="file"/>
+        <p v-show="url">
+            <img :src="url" style="width:200px;"/>
+        </p>
+        <p v-show="base64">
+            <textarea style="width:800px;height:200px;">{{base64}}</textarea>
+        </p>
+    </fieldset>
+    <script>
+        var fieldset06Vue = new Vue({
+            el: "#fieldset06",
+            data:{
+                url:"",
+                base64:""
+            },
+            methods:{
+                show:function(){
+                    var files = event.target.files;
+                    var fileReader = new FileReader();
+                    var mime = files[0].type;
+                    fileReader.readAsBinaryString(files[0]);
+                    fileReader.onload = function(){
+                        fieldset06Vue.$data.base64 = window.btoa(this.result);
+                        fieldset06Vue.$data.url = "data:" + mime + ";base64," + fieldset06Vue.$data.base64;
+                    };
+                }
+            }
+        });
+    </script>
+
+
+</body>
+</html>

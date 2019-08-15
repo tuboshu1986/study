@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>标签</title>
+</head>
+<body onoffline="alert('断网了');">
+
+<fieldset>
+    <legend>meter</legend>
+    <meter value="75" min="5" max="100" low="0" high="100"></meter>
+</fieldset>
+
+<fieldset>
+    <legend>dialog</legend>
+
+    <button onclick="document.getElementById('my_dialog').show()">打开对话框</button>
+
+    <button onclick="document.getElementById('my_dialog').showModal()">打开模式对话框</button>
+
+    <dialog id="my_dialog" style="border:1px solid red;">
+        我的世界
+        <p>
+            <button onclick="document.getElementById('my_dialog').close()">关闭</button>
+        </p>
+    </dialog>
+
+</fieldset>
+
+<fieldset>
+    <legend>figure</legend>
+    <figure>
+        <figcaption>figure</figcaption>
+        设置<mark>figure</mark>和figcaption
+    </figure>
+</fieldset>
+
+<fieldset>
+    <legend>progress</legend>
+    <progress value="30" max="100"></progress>
+</fieldset>
+
+<fieldset>
+    <legend>time</legend>
+    <time></time>
+</fieldset>
+
+<fieldset>
+    <legend>details</legend>
+
+    <details>
+        <summary>前军</summary>
+        左右后中
+    </details>
+</fieldset>
+
+<fieldset>
+    <legend>datalist</legend>
+    <input autocomplete="input-datalist" type="text"/>
+    <datalist id="input-datalist">
+        <data value="aaaa"/>
+        <data value="bbbb"/>
+        <data value="cccc"/>
+    </datalist>
+</fieldset>
+
+<fieldset>
+    <legend>新增的input</legend>
+    <p>text<input autofocus type="text"/></p>
+    <p>range<input type="range"/></p>
+    <p>datetime<input type="date"/></p>
+    <p>number<input step="5" type="number"/></p>
+    <p>图片按钮<input type="image" width="50px" src="image/Men_s_Boots_1127px_1235576_easyicon.net.png"/></p>
+</fieldset>
+
+<fieldset>
+    <legend>全局属性</legend>
+    <p contenteditable="true">落霞与孤鹜齐飞</p>
+</fieldset>
+
+<fieldset>
+    <legend>新增事件</legend>
+    <p onmousewheel="console.log('>>>>');">落霞与孤鹜齐飞</p>
+</fieldset>
+
+
+
+</body>
+</html>
