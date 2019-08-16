@@ -1,11 +1,14 @@
 package com.hb.ztree.test;
 
+import com.hb.ztree.TreeModel;
+
 import javax.persistence.*;
 import java.util.Date;
 
 @Entity
 @Table(name = "test_table")
-public class Test {
+@EntityListeners({TestListeren.class})
+public class Test extends TreeModel {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", nullable = false)
@@ -72,14 +75,6 @@ public class Test {
 
     public void setParentId(Integer parentId) {
         this.parentId = parentId;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
     }
 
     public String getUrl() {
@@ -196,6 +191,16 @@ public class Test {
 
     public String getTreeNumber() {
         return treeNumber;
+    }
+
+    @Override
+    public String getName() {
+        return name;
+    }
+
+    @Override
+    public void setName(String name) {
+        this.name = name;
     }
 
     public void setTreeNumber(String treeNumber) {

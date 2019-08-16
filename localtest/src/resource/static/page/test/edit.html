@@ -99,7 +99,7 @@
 
     function setParams(params){
         $("#form input").each(function(i, item){
-            if($(item).is("[type='text']") || $(item).is("[type='number']")){
+            if($(item).is("[type='text']") || $(item).is("[type='number']") || $(item).is("[type='hidden']")){
                 if($(item).attr("id") == "parentName" && params.parent){
                     $(item).val(params.parent.name);
                     return;
