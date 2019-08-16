@@ -33,9 +33,9 @@ public class TestController {
         return testDao.findOne(id);
     }
 
-    @RequestMapping("/add")
+    @RequestMapping("/save")
     @ResponseBody
-    public Object add(Test test){
+    public Object save(Test test){
         test.setCreateUserId(1);
         test.setCreatedAt(new Date());
 
@@ -43,7 +43,11 @@ public class TestController {
         test.setUpdatedAt(new Date());
 
         testDao.save(test);
-        return "{\"code\": \"200\", \"message\": \"新增成功\"}";
+        if(test.getId() == null){
+            return "{\"code\": \"200\", \"message\": \"新增成功\"}";
+        }else{
+            return "{\"code\": \"200\", \"message\": \"更新成功\"}";
+        }
     }
 
     @RequestMapping("/tree")
