@@ -47,6 +47,17 @@ public class Test {
     @Column(name = "tree_number")
     private String treeNumber;
 
+    @Transient
+    private Test parent;
+
+    public Test getParent() {
+        return parent;
+    }
+
+    public void setParent(Test parent) {
+        this.parent = parent;
+    }
+
     public Integer getId() {
         return id;
     }

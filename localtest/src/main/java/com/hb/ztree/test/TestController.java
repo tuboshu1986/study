@@ -23,7 +23,18 @@ public class TestController {
     @Autowired
     private TestDao testDao;
 
+    @RequestMapping("/get")
+    @ResponseBody
+    public Object get(Integer id){
+        Test data = testDao.findOne(id);
+        if(data.getParentId() != null){
+            data.setParent(testDao.findOne(data.getParentId()));
+        }
+        return testDao.findOne(id);
+    }
+
     @RequestMapping("/add")
+    @ResponseBody
     public Object add(Test test){
         test.setCreateUserId(1);
         test.setCreatedAt(new Date());
@@ -32,10 +43,10 @@ public class TestController {
         test.setUpdatedAt(new Date());
 
         testDao.save(test);
-        return "{'code': '200', 'message': '新增成功'}";
+        return "{\"code\": \"200\", \"message\": \"新增成功\"}";
     }
 
-    @GetMapping("/tree")
+    @RequestMapping("/tree")
     @ResponseBody
     public Object tree(){
         return treeDataSource.getData();
@@ -44,6 +55,6 @@ public class TestController {
     @ExceptionHandler(Exception.class)
     @ResponseBody
     public Object exception(Exception e){
-        return "{'code': '500', 'message': '"+e.getMessage()+"'}";
+        return "{\"code\": \"500\", \"message\": \""+e.getMessage()+"\"}";
     }
 }
