@@ -3,3 +3,7 @@ target/*
 *.class
 .idea
 local-test.iml
+src/resource/META-INF
+src/resource/META-INF/*
+out
+out/*

@@ -18,10 +18,8 @@
 
 <div style="text-align:right;">
     <input id="search-input" type="search"/><button onclick="search()">搜索</button>
-</div>
-
-<div style="text-align:right;">
     <a target="_blank" href="/page/test/edit.html">新增</a>
+    <a target="_blank" href="javascript:void(0);" onclick="window.localStorage.removeItem('initId');window.location.reload();">全树</a>
 </div>
 
 <dialog id="operation" style="top:0px;bottom:0px;">
@@ -78,7 +76,7 @@
                         }
                     });
                 }
-                window.localStorage.removeItem("initId")
+                //window.localStorage.removeItem("initId")
             }
         }
     });

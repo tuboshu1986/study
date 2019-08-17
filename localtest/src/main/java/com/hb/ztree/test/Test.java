@@ -6,7 +6,7 @@ import javax.persistence.*;
 import java.util.Date;
 
 @Entity
-@Table(name = "test_table")
+@Table(name = "moko_sys_menus")
 @EntityListeners({TestListeren.class})
 public class Test extends TreeModel {
     @Id
