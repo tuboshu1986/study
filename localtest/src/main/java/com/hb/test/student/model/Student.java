@@ -32,7 +32,6 @@ public class Student extends BaseModel {
             joinColumns = @JoinColumn(name = "student_id", referencedColumnName = "id"),
             inverseJoinColumns = @JoinColumn(name = "course_id", referencedColumnName = "id")
     )
-
     private List<Course> coureses = new ArrayList<>();
 
     @OneToMany(mappedBy = "studentId", fetch = FetchType.LAZY)
