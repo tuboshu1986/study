@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>编辑用户</title>
+</head>
+<body>
+<div id="user-edit">
+    <form>
+        <div>
+            <p>
+                <label>名称:<input v-model="record.username" type="text"/></label>
+            </p>
+            <p>
+                <label>密码:<input v-model="record.password" type="text"/></label>
+            </p>
+            <p>
+                <label>锁定:<input v-model="record.locked" type="checkbox"/></label>
+            </p>
+        </div>
+
+        <div>
+            <input @click="save" type="button" value="保存"/>
+        </div>
+    </form>
+</div>
+
+<script type="text/javascript" src="/plugin/vue.js"></script>
+<script type="text/javascript" src="/plugin/jquery-1.8.3.js"></script>
+<script type="text/javascript" src="/utils/globalUI.js"></script>
+<script>
+
+    var userEditVue = new Vue({
+        el: "#user-edit",
+        data:{
+            record:{
+                username:"",
+                password:"",
+                locked:""
+            }
+        },
+        methods:{
+            save:function(){
+                ManagerGlobalDataUtils.post("/user/save", this.record, function(){
+                    ManagerGlobalUI.message("保存成功");
+                    window.close();
+                });
+            }
+        }
+    });
+
+</script>
+</body>
+</html>

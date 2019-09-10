@@ -4,8 +4,12 @@ import org.hibernate.annotations.SQLDelete;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.ManyToMany;
 import javax.persistence.Table;
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * 权限
@@ -14,14 +18,34 @@ import java.io.Serializable;
 @Table(name = "permission_info")
 @SQLDelete(sql = "update permission_info set is_del = 1 where id = ?")
 public class PermissionInfo extends BaseModel implements Serializable {
-    @Column(name = "available")
+    public PermissionInfo(){}
+
+    public PermissionInfo(String roleCode){
+        this.getRoles().add(new RoleInfo(roleCode));
+    }
+
+    @Column(name = "code")
     private String code;
-    @Column(name = "available")
+    @Column(name = "name")
     private String name;
     @Column(name = "description")
     private String description;
-    @Column(name = "available")
+    @Column(name = "available", columnDefinition = "bit default 0 ")
     private Boolean available;
+
+    @ManyToMany(fetch = FetchType.LAZY, mappedBy = "permissions")
+    private List<RoleInfo> roles;
+
+    public List<RoleInfo> getRoles() {
+        if(roles == null){
+            roles = new ArrayList<>();
+        }
+        return roles;
+    }
+
+    public void setRoles(List<RoleInfo> roles) {
+        this.roles = roles;
+    }
 
     public String getCode() {
         return code;

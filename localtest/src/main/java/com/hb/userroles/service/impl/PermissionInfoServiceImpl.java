@@ -7,6 +7,8 @@ import com.hb.userroles.service.PermissionInfoService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 public class PermissionInfoServiceImpl extends CrudServiceImpl<PermissionInfo, String> implements PermissionInfoService {
 
@@ -21,5 +23,10 @@ public class PermissionInfoServiceImpl extends CrudServiceImpl<PermissionInfo, S
     @Override
     public CrudDao<PermissionInfo, String> getDao() {
         return permissionInfoDao;
+    }
+
+    @Override
+    public List<PermissionInfo> findByRoleCode(String roleCode) {
+        return null;
     }
 }

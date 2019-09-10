@@ -77,11 +77,18 @@ public interface CrudService<T, K extends Serializable> {
     Page<T> findPage(Map<String, String[]> params, Pageable pageable);
 
     /**
-     * 按属性查询
+     * 按属性查询，返回一条数据
      * @param params
      * @return
      */
     T findOne(T params);
+
+    /**
+     * 按属性查询，返回所有符合条件的数据
+     * @param params
+     * @return
+     */
+    List<T> findAll(T params);
 
     CrudDao<T, K> getDao();
 }

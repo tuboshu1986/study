@@ -48,7 +48,54 @@ public class BaseModel implements Serializable {
     private Date updatedAt;
 
     //是否删除，1:删除，0：未删除
-    @Column(name = "is_del", columnDefinition = "default 0 ")
+    @Column(name = "is_del", columnDefinition = "integer(3) default 0 ")
     private Integer isDel;
 
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
+
+    public UserInfo getCreater() {
+        return creater;
+    }
+
+    public void setCreater(UserInfo creater) {
+        this.creater = creater;
+    }
+
+    public Date getCreatedAt() {
+        return createdAt;
+    }
+
+    public void setCreatedAt(Date createdAt) {
+        this.createdAt = createdAt;
+    }
+
+    public UserInfo getUpdater() {
+        return updater;
+    }
+
+    public void setUpdater(UserInfo updater) {
+        this.updater = updater;
+    }
+
+    public Date getUpdatedAt() {
+        return updatedAt;
+    }
+
+    public void setUpdatedAt(Date updatedAt) {
+        this.updatedAt = updatedAt;
+    }
+
+    public Integer getIsDel() {
+        return isDel;
+    }
+
+    public void setIsDel(Integer isDel) {
+        this.isDel = isDel;
+    }
 }

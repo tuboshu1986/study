@@ -1,8 +1,8 @@
 package com.hb.userroles.service.impl;
 
+import com.hb.userroles.model.BaseModel;
 import com.hb.userroles.service.CrudService;
 import com.moko.erp.productmanage.common.BeanUtil;
-import com.moko.erp.productmanage.domain.BaseModel;
 import org.springframework.data.domain.Example;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -103,6 +103,11 @@ public abstract class CrudServiceImpl<T, K extends Serializable> implements Crud
     @Override
     public T findOne(T params) {
         return getDao().findOne(Example.of(params));
+    }
+
+    @Override
+    public List<T> findAll(T params) {
+        return getDao().findAll(Example.of(params));
     }
 
     public abstract Class<T> modelClass();

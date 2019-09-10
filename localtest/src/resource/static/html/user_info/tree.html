@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>用户角色权限树</title>
+</head>
+<body>
+
+<div id="user-tree">
+    <div>
+        <a @click="userEdit" href="javascript:void(0);">新增用户</a>
+    </div>
+</div>
+
+</body>
+
+<script type="text/javascript" src="/plugin/vue.js"></script>
+<script type="text/javascript">
+    var userTreeVue = new Vue({
+        el: "#user-tree",
+        data:{
+
+        },
+        methods:{
+            userEdit:function(){
+                window.open("edit.html", "", "width=800,height=600", false);
+            }
+        }
+    });
+</script>
+
+</html>
