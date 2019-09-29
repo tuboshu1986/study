@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+
+<style>
+	.item-panel{
+		display:inline-block;
+		width:400px;
+		height:150px;
+		vertical-align:middle;
+		background-color:rgba(0, 100, 0, 0.2);
+		margin-right:10px;
+		margin-bottom:10px;
+	}
+</style>
+
+<script>
+
+var baseUrl = "http://localhost:8080/";
+//var baseUrl = "http://jtest.mokotechnology.com/";
+
+var loginUrl = baseUrl + "login";
+var logoutUrl = baseUrl + "logout";
+
+function submitLogout(callback){
+	var iframe = document.createElement("iframe");
+	iframe.src = logoutUrl;
+	iframe.addEventListener("load", function(){
+		callback();
+		iframe.remove();
+	});
+	document.body.appendChild(iframe);
+}
+
+function submitLogin(username){
+	var form = document.getElementById("form");
+	form.action = loginUrl;
+	submitLogout(function(){
+		document.getElementById("username").value = username;
+		document.getElementById("form").submit();
+	});
+}
+</script>
+
+<body>
+
+<div>
+	<form id="form" target="_blank" action="" method="post">
+		<input type="text" name="username" id="username"/>
+		<input type="text" name="password" id="password" value="123456"/>
+	</form>
+</div>
+
+<div>
+	<div class="item-panel">
+		<p class="item">
+			<label>研发</label>
+			<a onclick="submitLogin('hb_test_user_yanfa@911.com')" href="javascript:void(0);">hb_test_user_yanfa@911.com</a>
+		</p>
+	</div>
+	
+	<div class="item-panel">
+		<p class="item">
+			<label>BOM</label>
+			<a onclick="submitLogin('hb_test_user_bom@911.com')" href="javascript:void(0);">hb_test_user_bom@911.com</a>
+		</p>
+	</div>
+	
+	<div class="item-panel">
+		<p class="item">
+			<label>产品经理</label>
+			<a onclick="submitLogin('hb_test_user_pm@911.com')" href="javascript:void(0);">hb_test_user_pm@911.com</a>
+		</p>
+		<p class="item">
+			<label>产品总监</label>
+			<a onclick="submitLogin('hb_test_user_cpo@911.com')" href="javascript:void(0);">hb_test_user_cpo@911.com</a>
+		</p>
+		<p class="item">
+			<label>产品</label>
+			<a onclick="submitLogin('hb_test_user_changpin@911.com')" href="javascript:void(0);">hb_test_user_changpin@911.com</a>
+		</p>
+	</div>
+	
+	<div class="item-panel">
+		<p class="item">
+			<label>财务</label>
+			<a onclick="submitLogin('hb_test_user_caiwu@911.com')" href="javascript:void(0);">hb_test_user_caiwu@911.com</a>
+		</p>
+	</div>
+	
+	<div class="item-panel">
+		<p class="item">
+			<label>业务</label>
+			<a onclick="submitLogin('hb_test_user_yewu@911.com')" href="javascript:void(0);">hb_test_user_yewu@911.com</a>
+		</p>
+		<p class="item">
+			<label>业务主管</label>
+			<a onclick="submitLogin('hb_test_user_yewuzhuguan@911.com')" href="javascript:void(0);">hb_test_user_yewuzhuguan@911.com</a>
+		</p>
+	</div>
+	
+	<div class="item-panel">
+		<p class="item">
+			<label>PMC</label>
+			<a onclick="submitLogin('hb_test_user_pmc@911.com')" href="javascript:void(0);">hb_test_user_pmc@911.com</a>
+		</p>
+	</div>
+	
+	<div class="item-panel">
+		<p class="item">
+			<label>采购</label>
+			<a onclick="submitLogin('hb_test_user_caigou@911.com')" href="javascript:void(0);">hb_test_user_caigou@911.com</a>
+		</p>
+		<p class="item">
+			<label>采购主管</label>
+			<a onclick="submitLogin('hb_test_user_caigouzhuguan@911.com')" href="javascript:void(0);">hb_test_user_caigouzhuguan@911.com</a>
+		</p>
+	</div>
+	
+	<div class="item-panel">
+		<p class="item">
+			<label>仓库</label>
+			<a onclick="submitLogin('hb_test_user_cangku@911.com')" href="javascript:void(0);">hb_test_user_cangku@911.com</a>
+		</p>
+		<p class="item">
+			<label>仓库主管</label>
+			<a onclick="submitLogin('hb_test_user_cangkuzhuguan@911.com')" href="javascript:void(0);">hb_test_user_cangkuzhuguan@911.com</a>
+		</p>
+	</div>
+	
+	<div class="item-panel">
+		<p class="item">
+			<label>工厂</label>
+			<a onclick="submitLogin('hb_test_user_gongchang@911.com')" href="javascript:void(0);">hb_test_user_gongchang@911.com</a>
+		</p>
+	</div>
+	
+	<div class="item-panel">
+		<p class="item">
+			<label>测试用户</label>
+			<a onclick="submitLogin('hb_test_user_test@911.com')" href="javascript:void(0);">hb_test_user_test@911.com</a>
+		</p>
+		<p class="item">
+			<label>管理员</label>
+			<a onclick="submitLogin('hb_test_user_00@911.com')" href="javascript:void(0);">hb_test_user_00@911.com</a>
+		</p>
+	</div>
+</div>
+
+<ol style="background-color:#ccc;">
+	<li>
+		<a target="_blank" href="http://localhost:8080/moko/index.do">后台</a>
+	</li>
+	<li>
+		<a target="_blank" href="http://localhost:8080/product/product_list">产品管理</a>
+	</li>
+	<li>
+		<a target="_blank" href="http://localhost:8080/product/bom_list">产品BOM</a>
+	</li>
+	<li>
+		<a target="_blank" href="http://localhost:8080/product/product_ecn_list">变更管理</a>
+	</li>
+	<li>
+		<a target="_blank" href="http://localhost:8080/product/product_ecn_list">产品分类管理</a>
+	</li>
+	<li>
+		<a target="_blank" href="http://localhost:8080/provided_by_customer_follow/list">客供物料跟进表</a>
+	</li>
+	<li>
+		<a target="_blank" href="http://rtest2.mokotechnology.com/pi_infos">ruby PI管理</a>
+	</li>
+	<li>
+		<a target="_blank" href="http://localhost:8080/pi_infos/stay_bom_audit">java PI管理</a>
+	</li>
+	<li>
+		<a target="_blank" href="http://localhost:8080/pi_info/view_pi_progress?piId=210">PI进度跟踪 210</a><br/>
+		<a target="_blank" href="http://localhost:8080/pi_info/view_pi_progress?piId=211">PI进度跟踪 211</a><br/>
+		<a target="_blank" href="http://localhost:8080/pi_info/view_pi_progress?piId=212">PI进度跟踪 212</a><br/>
+	</li>
+	<li>
+		<a target="_blank" href="http://localhost:8080/pi_product_follow/list">PI成品跟进</a>
+	</li>
+	<li>
+		<a target="_blank" href="http://localhost:8080/inquirer/bom_list">java询价管理</a>
+	</li>
+	<li>
+		<a target="_blank" href="http://localhost:8080/supplement_apply/list">生产补料</a>
+	</li>
+	<li>
+		<a target="_blank" href="http://localhost:8080/outsourcing_input/list">外购入库</a>
+	</li>
+	<li>
+		<a target="_blank" href="http://localhost:8080/stock_query/detail?id=34891&page=100">库存变化明细 34891 11020000101451</a>
+	</li>
+	<li>
+		<a target="_blank" href="http://localhost:8080/material_release/list">释放物料</a>
+	</li>
+</ol>
+
+</body>
+</html>

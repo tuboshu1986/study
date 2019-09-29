@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>记录</title>
+		
+	<script src="plugins/vue.js" type="text/javascript"></script>
+		
+	<link href="default.css" rel="stylesheet" type="text/css" /> 
+	<link href="css/card.css" rel="stylesheet" type="text/css" /> 
+	<script src="plugins/globalUI.js" type="text/javascript"></script>
+</head>
+
+<body>
+	<div id="job-page" class="page-body">
+		<div style="max-height:400px;overflow:auto;" v-show="ctl.editformShow">
+			<P class="block-field-item">
+				<span style="display:inline-block;">标题：</span>
+				<span style="display:inline-block;">
+					<label class="grey-inline-box">
+						<input v-model.trim="formData.title" class="field none-field"/>
+						<a @click="formData.title=''" class="a-simple-button" href="javascript:void(0);">x</a>
+					</label>
+				</span>
+			</P>
+			<P class="block-field-item">
+				<span style="display:inline-block;vertical-align:middle;">内容：</span>
+				<span style="display:inline-block;vertical-align:middle;">
+					<label v-for="(item, i) in formData.content" style="display:block;" class="grey-inline-box">
+						<textarea v-model.trim="item.value" class="field none-field" style="width:334px;height:80px;"></textarea>
+						<a @click="item.value=''" class="a-simple-button" href="javascript:void(0);" style="position:absolute;top:0px;right:0px;">x</a>
+					</label>
+				</span>
+			</P>
+			<P class="block-field-item">
+				<span style="display:inline-block;width:387px;text-align:right;">
+					<input @click="saveJob" type="button" value="✔" class="button default-button"/>
+					<input @click="addContentInput" type="button" value="+" class="button default-button"/>
+					<a @click="clearEditForm" href="javascript:void(0);">清空</a>
+					<a @click="ctl.editformShow=false" href="javascript:void(0);">隐藏</a>
+				</span>
+			</P>
+		</div>
+		
+		<div>
+			<P class="field-item">
+				标题：
+				<label class="grey-inline-box">
+					<input v-model.trim="condition.title" class="field none-field"/>
+					<a @click="condition.title=''" class="a-simple-button" href="javascript:void(0);">x</a>
+				</label>
+			</P>
+			<P class="field-item">
+				<a @click="condition.title=''" href="javascript:void(0);" class="a-simple-button" title="清空条件">x</a>
+				<a @click="ctl.editformShow=true" href="javascript:void(0);" class="a-simple-button" title="展开新增">+</a>
+				<a @click="persist" href="javascript:void(0);" class="a-simple-button" title="保存">s</a>
+				<a @click="loadData" href="javascript:void(0);" class="a-simple-button" title="打开">o</a>
+				<a @click="clearScreen" href="javascript:void(0);" class="a-simple-button" title="清空显示">c</a>
+			</P>
+		</div>
+		
+		<div style="height:calc(100% - 68px);overflow:auto;">
+			<dl v-for="(item, i) in dataList" class="card-panel">
+				<dt class="card-title">
+					{{dataList.length - i}}. {{item.title}}
+				</dt>
+				<dd class="card-content">
+					<div v-for="(citem, j) in item.content">
+						<pre style="font-family:'微软雅黑';">{{j + 1}}) {{citem.value}}</pre>
+					</div>
+				</dd>
+			</dl>
+		</div>
+	</div>
+</body>
+
+<script>
+
+var jobPageData = (function(){
+	var obj = Object.create(null);
+	
+	obj.jobs = [];
+	obj.vueObj = null;
+	
+	obj.append = function(obj){
+		this.jobs.splice(0, 0, obj);
+		this.resetVueJobs();
+	};
+	
+	obj.clearData = function(){
+		obj.jobs.splice(0, obj.jobs.length);
+		this.resetVueJobs();
+	};
+	
+	obj.loadData = function(){
+		var that = this;
+		var input = document.createElement("input");
+		input.type = "file";
+		input.addEventListener("change",function(){
+			var file = input.files[0];
+			var reader = new FileReader();
+			reader.onload = function(){
+				var json = JSON.parse(reader.result);
+				that.jobs.splice(0, that.jobs.length);
+				json.forEach(item => {
+					that.jobs.push(item);
+				});
+				that.resetVueJobs();
+			};
+			reader.readAsText(file);
+		});
+		input.click();
+	};
+	
+	obj.persist = function(){
+		var a = document.createElement("a");
+		a.download = "job_" + this.fileSuf() + ".json";
+		a.href=window.URL.createObjectURL(new Blob([JSON.stringify(this.jobs)]));
+		a.click();
+	};
+	
+	obj.resetVueJobs = function(){
+		var title = this.getVueCondition().title;
+		var vueJobs = this.getVueJobs();
+		vueJobs.splice(0, vueJobs.length);
+		if(!title){
+			for(let job of this.jobs){
+				vueJobs.push(job);
+			}
+			return;
+		}
+		for(let job of this.jobs){
+			if(job.title.indexOf(title) >= 0){
+				vueJobs.push(job);
+			}
+		}
+	};
+	
+	obj.getVueCondition = function(){
+		return this.vueObj.$data.condition;
+	};
+	
+	obj.getVueJobs = function(){
+		return this.vueObj.$data.dataList;
+	};
+	
+	obj.emptyFormData = function(){
+		return {
+			title:"",
+			content:[]
+		};
+	};
+	
+	obj.createContent = function(){
+		return {
+			value: ""
+		};
+	};
+	
+	obj.isValide = function(obj){
+		if(!obj.title || !obj.content || obj.content.length == 0){
+			return false;
+		}
+		for(let item of obj.content){
+			if(!item.value)
+				return false;
+		}
+		return true;
+	};
+	
+	obj.fileSuf = function(){
+		var d = new Date();
+		return d.toJSON();
+	};
+	
+	return obj;
+})();
+
+
+var jobPageVue = jobPageData.vueObj = new Vue({
+	el: "#job-page",
+	data: {
+		formData:{
+			title:"",
+			content:[jobPageData.createContent()]
+		},
+		condition:{
+			title:""
+		},
+		dataList:[],
+		ctl:{
+			editformShow:false
+		}
+	},
+	methods:{
+		clearScreen:function(){
+			jobPageData.clearData();
+		},
+		loadData:function(){
+			jobPageData.loadData();
+		},
+		persist:function(){
+			jobPageData.persist();
+		},
+		saveJob:function(){
+			if(jobPageData.isValide(this.formData)){
+				var obj = jobPageData.emptyFormData();
+				ManagerGlobalObjectUtils.copyPropertiesThorough(this.formData, obj);
+				jobPageData.append(obj);
+				this.clearEditForm();
+			}
+		},
+		clearEditForm:function(){
+			var formData = this.formData;
+			formData.title = '';
+			formData.content.splice(0, formData.content.length);
+			formData.content.push(jobPageData.createContent());
+		},
+		addContentInput:function(){
+			this.formData.content.push(jobPageData.createContent());
+		}
+	},
+	watch:{
+		"condition.title":function(){
+			jobPageData.resetVueJobs();
+		}
+	}
+});
+
+</script>
+
+
+</html>

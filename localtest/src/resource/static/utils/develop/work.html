@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>工作</title>
+		
+	<script src="plugins/vue.js" type="text/javascript"></script>
+		
+	<link href="default.css" rel="stylesheet" type="text/css" /> 
+	<link href="css/card.css" rel="stylesheet" type="text/css" /> 
+	<script src="plugins/globalUI.js" type="text/javascript"></script>
+</head>
+
+<body>
+	<div id="work-page" class="page-body">
+		<div>
+			<P class="field-item">
+				名称：
+				<label class="grey-inline-box">
+					<input v-model="formDate.workName" class="field none-field"/>
+					<a @click="formDate.workName=''" class="a-simple-button" href="javascript:void(0);">x</a>
+				</label>
+			</P>
+			<P class="field-item">
+				<label><input checked type="checkbox"/>PI流程</label>
+			</P>
+			<P class="field-item">
+				<input @click="createWork" type="button" value="✔" class="button default-button"/>
+				<a @click="clearChecked" class="a-simple-button" href="javascript:void(0);" title="取消选中">c</a>
+				<a @click="persist" class="a-simple-button" href="javascript:void(0);" title="保存">s</a>
+				<a @click="loadData" class="a-simple-button" href="javascript:void(0);" title="加载">o</a>
+				<a @click="clearScreen" class="a-simple-button" href="javascript:void(0);" title="清空显示">x</a>
+				<a @click="localtion" class="a-simple-button" href="javascript:void(0);" title="到当前">۞</a>
+			</P>
+		</div>
+		
+		<div id="work-panel" style="height:calc(100% - 65px);overflow:auto;">
+			<dl class="card-panel" v-for="(w,i) in workList" :class="{'checked-card':w.checked}">
+				<dt class="card-title">
+					{{workList.length - i}}. {{w.workName}}
+					<label class="card-checkbox">
+						<input @change="singleCheck(i)" v-model="w.checked" type="checkbox"/>
+					</label>
+				</dt>
+				<dd class="card-content" style="max-height:none;">
+					<p v-for="field in w.fieldList" style="margin:5px 10px;">
+						<label>
+							<span style="display:inline-block;width:80px;">{{field.title}}</span>: <input v-model.trim="field.value" class="field"/>
+						</label>
+					</p>
+				</dd>
+			</dl>
+		</div>
+	</div>
+</body>
+
+<script>
+
+var workPageVue = new Vue({
+	el: "#work-page",
+	data: {
+		formDate:{
+			workName:""
+		},
+		workList:[]
+	},
+	methods:{
+		singleCheck:function(index){
+			var currItem = this.workList[index];
+			if(currItem.checked){
+				this.workList.forEach(item => {
+					if(currItem != item){
+						item.checked = false;
+					}
+				});
+			}
+		},
+		localtion:function(){
+			if(this.workList.length==0){
+				return;
+			}
+			var checkedIndex = this.workList.findIndex(item => {
+				if(item.checked){
+					return true;
+				}
+				return false;
+			});
+			if(checkedIndex >= 0){
+				document.getElementById("work-panel").scrollTop = 440 * checkedIndex;
+			}
+		},
+		clearScreen:function(){
+			this.workList.splice(0, this.workList.length);
+		},
+		persist:function(){
+			var data = JSON.stringify(this.workList);
+			var a = document.createElement("a");
+			a.download = "work_" + new Date().toJSON() + ".json";
+			a.href=window.URL.createObjectURL(new Blob([data]));
+			a.click();
+		},
+		loadData:function(){
+			var that = this;
+			var input = document.createElement("input");
+			input.type="file";
+			input.addEventListener("change", function(){
+				var file = input.files[0];
+				var reader = new FileReader();
+				reader.onload = function(){
+					var arr = JSON.parse(this.result);
+					if(arr && arr.length > 0){
+						that.$data.workList.slice(0, that.$data.workList.length);
+						arr.forEach(item => {
+							that.$data.workList.push(item);
+						});
+					}
+				};
+				reader.readAsText(file);
+			});
+			input.click();
+		},
+		clearChecked:function(){
+			this.workList.forEach(function(item){
+				item.checked = false;
+			});
+		},
+		createWork:function(){
+			if(!this.formDate.workName){
+				this.formDate.workName = "测试";
+			}
+			this.workList.splice(0, 0, {
+				workName:this.formDate.workName,
+				checked:false,
+				fieldList:[
+					{title:"询价单号",value:""}, 
+					{title:"询价子单号",value:""}, 
+					{title:"PI组号",value:""}, 
+					{title:"PI号",value:""}, 
+					{title:"BOM号",value:""}, 
+					{title:"MOKO号",value:""}, 
+					{title:"入库单号",value:""}, 
+					{title:"领料单号",value:""}, 
+					{title:"采购单号",value:""}, 
+					{title:"补料号",value:""}
+				]
+			});
+		}
+	}
+});
+
+</script>
+
+</html>

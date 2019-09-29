@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>表清单</title>
+		
+	<script src="plugins/vue.js" type="text/javascript"></script>
+		
+	<link href="default.css" rel="stylesheet" type="text/css" /> 
+	<script src="plugins/globalUI.js" type="text/javascript"></script>
+</head>
+
+<body>
+	<div id="table-list" class="page-body">
+		<div v-show="ctl.showAddPanel">
+			<P class="field-item">
+				表名：
+				<label class="grey-inline-box">
+					<input v-model.trim="formData.tableName" class="field none-field"/>
+					<a class="a-simple-button" @click="formData.tableName=''" href="javascript:void(0);">x</a>
+				</label>
+			</P>
+			<P class="field-item">
+				含义：
+				<label class="grey-inline-box">
+					<input v-model.trim="formData.tableCommon" class="field none-field"/>
+					<a class="a-simple-button" @click="formData.tableCommon=''" href="javascript:void(0);">x</a>
+				</label>
+			</P>
+			<P class="field-item">
+				类型：
+				<label class="grey-inline-box">
+					<input v-model.trim="formData.className" class="field none-field"/>
+					<a class="a-simple-button" @click="formData.className=''" href="javascript:void(0);">x</a>
+				</label>
+			</P>
+			<P class="field-item">
+				<input type="button" @click="save" value="✔" class="button default-button"/>
+				<a @click="clearForm" href="javascript:void(0);">清空</a>
+				<a @click="fallbackOneStep" href="javascript:void(0);">回退</a>
+				<a @click="ctl.showAddPanel=false" href="javascript:void(0);">隐藏</a>
+			</P>
+		</div>
+		
+		<div>
+			<P class="field-item">
+				表名：
+				<label class="grey-inline-box">
+					<input v-model.trim="condition.tableName" class="field none-field"/>
+					<a class="a-simple-button" @click="condition.tableName=''" href="javascript:void(0);">x</a>
+				</label>
+			</P>
+			<P class="field-item">
+				<a @click="clearCondition" href="javascript:void(0);" class="a-simple-button" title="清空条件">x</a>
+				<a @click="ctl.showAddPanel=true" href="javascript:void(0);" class="a-simple-button" title="展开新增">+</a>
+				<a @click="persist" href="javascript:void(0);" class="a-simple-button" title="保存">s</a>
+				<a @click="loadData" href="javascript:void(0);" class="a-simple-button" title="打开">o</a>
+				<a @click="beginEdit" href="javascript:void(0);" class="a-simple-button" :class="{'a-simple-button-down':ctl.editable}" title="开始编辑">e</a>
+				<a @click="sortByTableName" href="javascript:void(0);" class="a-simple-button" title="按表名排序">ns</a>
+			</P>
+		</div>
+		
+		<div style="min-height:calc(100% - 138px);max-height:calc(100% - 138px);overflow:auto;">
+			<table class="data-table" cellspacing="0">
+				<tbody>
+					<tr v-for="(t, i) in tableList">
+						<td width="30" v-show="ctl.editable">
+							<label style="width:100%;height:100%;"><input type="checkbox"/></label>
+						</td>
+						<td width="40px">{{i+1}}</td>
+						<td width="">
+							<a @click="showTable(i)" href="javascript:void(0);">{{t.tableName}}</a>
+						</td>
+						<td width="200px">{{t.tableCommon}}</td>
+						<td width="200px">{{t.className}}</td>
+					</tr>
+				</tbody>
+			</table>
+		</div>
+	</div>
+</body>
+
+<script>
+
+	var pageData = {
+		tableList:[],
+		sortByTableName:function(){
+			if(!this.tableList || this.tableList.length==0)
+				return;
+			var tmpArr = [];
+			this.tableList.map(item => {
+				return item.tableName;
+			}).sort().forEach((item, i) => {
+				tmpArr.push(this.getByName(item));
+			});
+			this.tableList.splice(0, this.tableList.length);
+			tmpArr.forEach(item => {
+				this.tableList.push(item);
+			});
+			this.resetVueList(this.getVueTableList(), this.getCondition());
+		},
+		loadData:function(){
+			var input = document.createElement("input");
+			input.type="file";
+			input.addEventListener("change", function(){
+				var file = input.files[0];
+				var reader = new FileReader();
+				reader.onload = function(){
+					var text = this.result
+					if(text && text.length > 0){
+						pageData.tableListFromText(text);
+					}
+				};
+				reader.readAsText(file);
+				
+			});
+			input.click();
+		},
+		tableListFromText:function(text){
+			var arr = null;
+			try{
+				arr = JSON.parse(text);
+			}catch(e){
+				console.err(e);
+			}
+			if(arr){
+				arr.forEach((item) => {
+					this.appendData(item);
+				});
+			}
+		},
+		persist:function(){
+			var str = JSON.stringify(this.tableList);
+			var url = window.URL.createObjectURL(new Blob([str]));
+			var a = document.createElement("a");
+			a.download = "table.json";
+			a.href=url;
+			a.click();
+		},
+		getVueTableList:function(){
+			return pageVue.$data.tableList;
+		},
+		getCondition:function(){
+			return pageVue.$data.condition;
+		},
+		pop:function(){
+			this.tableList.pop();
+			this.resetVueList(this.getVueTableList(), this.getCondition());
+		},
+		appendData:function(obj){
+			var oldData = this.getByName(obj.tableName);
+			if(oldData){
+				ManagerGlobalObjectUtils.copyPropertiesThorough(obj, oldData);
+			}else{
+				this.tableList.push(obj);
+				this.resetVueList(this.getVueTableList(), this.getCondition());
+			}
+		},
+		getByName:function(tableName){
+			return this.tableList.find(item => {
+				if(tableName == item.tableName)
+					return true;
+				return false;
+			});
+		},
+		resetVueListDefault:function(){
+			this.resetVueList(this.getVueTableList(), this.getCondition());
+		},
+		resetVueList:function(list, condition){
+			list.splice(0, list.length);
+			for(let item of this.tableList){
+				if(this.recordIs(item, condition)){
+					list.splice(0, 0, item);
+				}
+			}
+		},
+		recordIs:function(obj1, obj2){
+			if(!obj2 || ManagerGlobalObjectUtils.propsIsEmpty(obj2)){
+				return true;
+			}
+			for(let key in obj2){
+				if(!obj2[key]){
+					continue;
+				}
+				if(typeof obj1[key] != typeof obj2[key]){
+					return false;
+				}
+				if(typeof obj1[key] == "string"){
+					if(obj1[key].indexOf(obj2[key]) < 0){
+						return false;
+					}
+				}else{
+					if(obj1[key] != obj2[key]){
+						return false;
+					}
+				}
+			}
+			return true;
+		}
+	};
+
+	var pageVue = new Vue({
+		el: "#table-list",
+		data:{
+			formData:{
+				database:"erp-test",
+				tableName:"",
+				tableCommon:"",
+				className:""
+			},
+			condition:{
+				tableName:""
+			},
+			tableList:[],
+			ctl:{
+				fallbackSteps:0,
+				showAddPanel:false,
+				editable:false
+			}
+		},
+		methods:{
+			showTable:function(i){
+				var params = {
+					pageName:"table",
+					opt: {
+						database: this.tableList[i].database,
+						tableName: this.tableList[i].tableName
+					}
+				};
+			
+				localStorage.setItem("parentDoScript", JSON.stringify(params));
+			},
+			beginEdit:function(){
+				if(this.ctl.editable == true){
+					this.ctl.editable = false;
+				}else{
+					this.ctl.editable = true;
+				}
+			},
+			loadData:function(){
+				pageData.loadData();
+			},
+			persist:function(){
+				pageData.persist();
+			},
+			save:function(){
+				var formData = {};
+				ManagerGlobalObjectUtils.copyPropertiesThorough(this.formData, formData);
+				if(!formData["tableName"]){
+					return;
+				}
+				pageData.appendData(formData);
+				this.clearForm();
+				this.ctl.fallbackSteps += 1;
+			},
+			clearForm:function(){
+				ManagerGlobalUtils.clearObject(this.formData);
+			},
+			clearCondition(){
+				ManagerGlobalUtils.clearObject(this.condition);
+			},
+			fallbackOneStep:function(){
+				if(this.ctl.fallbackSteps > 0){
+					pageData.pop();
+					this.ctl.fallbackSteps -= 1;
+				}
+			},
+			sortByTableName:function(){
+				pageData.sortByTableName();
+			}
+		},
+		watch:{
+			"condition.tableName":function(){
+				pageData.resetVueListDefault();
+			},
+			"formData.tableName":function(newName){
+				var tableData = pageData.getByName(newName);
+				if(tableData){
+					ManagerGlobalObjectUtils.copyPropertiesThorough(tableData, this.formData);
+				}
+			}
+		}
+	});
+</script>
+
+
+</html>
