@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>树</title>
+    <script type="text/javascript" src="global/zTree_v3/js/jquery-1.4.4.min.js"></script>
+    <script type="text/javascript" src="global/zTree_v3/js/jquery.ztree.all.js"></script>
+    <script type="text/javascript" src="global/zTree_v3/js/jquery.ztree.core.js"></script>
+    <script type="text/javascript" src="global/zTree_v3/js/jquery.ztree.exhide.js"></script>
+
+    <link rel="stylesheet" type="text/css" href="global/zTree_v3/css/zTreeStyle/zTreeStyle.css"/>
+    <link rel="stylesheet" type="text/css" href="global/zTree_v3/css/demo.css"/>
+
+</head>
+<body>
+
+<ul id="tree" class="ztree" style="width:calc(100% - 15px);max-height:700px;"></ul>
+
+<div style="text-align:right;">
+    <input id="search-input" type="search"/><button onclick="search()">搜索</button>
+    <a target="_blank" href="/page/test/edit.html">新增</a>
+    <a target="_blank" href="javascript:void(0);" onclick="window.localStorage.removeItem('initId');window.location.reload();">全树</a>
+</div>
+
+<dialog id="operation" style="top:0px;bottom:0px;">
+    <input id="operation-id" type="hidden"/>
+    <input id="operation-root-id" type="hidden"/>
+    <a onclick="showData();" href="javascript:void(0);">查看</a>
+    <a onclick="showTree();" href="javascript:void(0);">显示树</a>
+</dialog>
+
+<script>
+    $("#tree").css("height", (window.innerHeight - 100) + "px");
+
+    $.fn.zTree.init($("#tree"), {
+        async:{
+            enable:true,
+            dataType:"json",
+            dataFilter:function(treeId, parentNode, responseData){
+                responseData = responseData.map(function(item){
+                    item.open = true;
+                    return item;
+                });
+
+                return responseData;
+            },
+            url:"/test/tree"
+        },
+        data:{
+            simpleData:{
+                enable:true,
+                idKey:"id",
+                pIdKey:"pId",
+                rootPId:null
+            }
+        },
+        callback:{
+            onRightClick:function(event, id, node){
+                window.localStorage.setItem("pid", node.id);
+                window.localStorage.setItem("pname", node.name);
+                window.open("/page/test/edit.html");
+            },
+            onClick:function(event, id, node){
+                $("#operation-id").val(node.id);
+                $("#operation-root-id").val(((node.getPath())[0]).id);
+                $("#operation")[0].show();
+            },
+            onAsyncSuccess:function(){
+                var initId = Number.parseInt(window.localStorage.getItem("initId"));
+                if(initId && (typeof initId) == "number"){
+                    hideAllNodes();
+                    treeElem().getNodes().forEach(function(item){
+                        if(item.id == initId){
+                            var nodes = treeElem().transformToArray([item]);
+                            showFilterNodes(nodes);
+                        }
+                    });
+                }
+                //window.localStorage.removeItem("initId")
+            }
+        }
+    });
+
+    function showTree(){
+        window.localStorage.setItem("initId", $("#operation-root-id").val());
+        window.open("/tree.html");
+        $("#operation")[0].close();
+    }
+
+    function showData() {
+        var id = $("#operation-id").val();
+        $("#operation")[0].close();
+        window.localStorage.setItem("id", id);
+        window.open("/page/test/edit.html");
+    }
+    
+    function search() {
+        var val = document.getElementById("search-input").value;
+        var treeObj = treeElem();
+        var nodes = treeObj.transformToArray(treeObj.getNodes());
+        var showNodes = [];
+        if(!val){
+            showNodes = nodes;
+        }else{
+            nodes.forEach(function(item){
+               if(item.name.indexOf(val) < 0){
+                   return;
+               }
+                showNodes.push(item);
+            });
+        }
+        showFilterNodes(showNodes);
+    }
+
+    function showFilterNodes(nodes){
+        var rst = [];
+        nodes.forEach(function(item){
+            rst = rst.concat(parentAndSelf(item));
+        });
+        hideAllNodes();
+        treeElem().showNodes(rst);
+    }
+
+    function parentAndSelf(node){
+        var pnode = node;
+        var rst = [node];
+        while(pnode = pnode.getParentNode()){
+            rst.push(pnode);
+        }
+        return rst;
+    }
+
+    function hideAllNodes(){
+        var treeObj = treeElem();
+        allNodes().forEach(function(node){
+            treeObj.hideNode(node);
+        });
+    }
+
+    function allNodes(){
+        var treeObj = treeElem();
+        return treeObj.transformToArray(treeObj.getNodes());
+    }
+
+    function treeElem(){
+        return $.fn.zTree.getZTreeObj("tree");
+    }
+
+</script>
+
+</body>
+</html>

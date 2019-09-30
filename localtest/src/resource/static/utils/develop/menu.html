@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>树</title>
+	<script src="plugins/vue.js" type="text/javascript"></script>
+		
+	<link href="default.css" rel="stylesheet" type="text/css" /> 
+	<script src="plugins/globalUI.js" type="text/javascript"></script>
+</head>
+<body>
+
+<ul id="tree" class="ztree" style="width:calc(100% - 15px);max-height:700px;"></ul>
+<button onclick="loadFileAsText()">打开</button>
+</body>
+
+<script>
+
+function loadFileAsText(callback){
+	var fileInput = document.createElement("input");
+	fileInput.type = "file";
+	fileInput.accept = "application/json";
+	fileInput.value = "";
+	fileInput.onchange = function(){
+		var file = fileInput.files[0];
+		var reader = new FileReader();
+		reader.onload = function(){
+			var txt = reader.result;
+			if(callback)
+				callback(txt);
+		};
+		reader.readAsText(file);
+	};
+	fileInput.click();
+}
+
+
+</script>
+</html>
