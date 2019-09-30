@@ -3,5 +3,3 @@ target/*
 *.class
 .idea
 local-test.iml
-out
-out/*
