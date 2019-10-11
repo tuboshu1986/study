@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <title>Title</title>
+	<link href="default.css" rel="stylesheet" type="text/css" /> 
 </head>
 
 <style>
@@ -15,11 +16,27 @@
 		margin-right:10px;
 		margin-bottom:10px;
 	}
+	
+	.stream-item-title::before{
+		content:"【"
+	}
+	
+	.stream-item-title::after{
+		content:"】"
+	}
+	
+	.stream-item-checked{
+		background-color:rgba(0, 100, 0, 0.2);
+	}
+	
 </style>
 
 <script>
 
-var baseUrl = "http://localhost:8080/";
+var serverPort = "8080";
+var serverIP = "192.168.0.16";
+var baseUrl = "http://"+serverIP+":"+serverPort+"/";
+//var baseUrl = "http://localhost:8080/";
 //var baseUrl = "http://jtest.mokotechnology.com/";
 
 var loginUrl = baseUrl + "login";
@@ -29,10 +46,11 @@ function submitLogout(callback){
 	var iframe = document.createElement("iframe");
 	iframe.src = logoutUrl;
 	iframe.addEventListener("load", function(){
+		console.log("1");
 		callback();
 		iframe.remove();
 	});
-	document.body.appendChild(iframe);
+	document.getElementById("hide-panel").appendChild(iframe);
 }
 
 function submitLogin(username){
@@ -43,162 +61,322 @@ function submitLogin(username){
 		document.getElementById("form").submit();
 	});
 }
+
+function loginAndRedirect(username, url){
+	url = url ? (baseUrl + url) : baseUrl;
+	var openUrl = function(){
+		window.open(url);
+		document.getElementById("hide-iframe").removeEventListener("load", openUrl);
+	};
+	submitLogout(function(){
+		document.getElementById("hide-iframe").addEventListener("load", openUrl);
+		
+		var form = document.getElementById("hide-form");
+		form.action = loginUrl
+		form.querySelector("[name='username']").value = username;
+		form.querySelector("[name='password']").value = "123456";
+		form.submit();
+	});
+}
+
+function post(formData, callback){
+	var xhr = new XMLHttpRequest();
+	xhr.open("post", loginUrl);
+	xhr.addEventListener("load", function(){
+		if(xhr.readyState == 4){
+			if(callback){
+				callback();
+			}
+		}
+	});
+	xhr.send(formData);
+}
+
+function toLocal(){
+	var uriSuffix = document.getElementById("uri-suffix").value;
+	if(uriSuffix){
+		window.open(baseUrl + uriSuffix);
+	}
+}
+
+function openUrl(url){
+	window.open(baseUrl + url);
+}
+
+function updateBaseUrl(curr){
+	if(curr.value){
+		baseUrl = "http://"+serverIP+":"+curr.value+"/";
+	}else{
+		baseUrl = "http://"+serverIP+":"+serverPort+"/";
+	}
+	loginUrl = baseUrl + "login";
+	logoutUrl = baseUrl + "logout";
+}
+
 </script>
 
 <body>
 
-<div>
-	<form id="form" target="_blank" action="" method="post">
-		<input type="text" name="username" id="username"/>
-		<input type="text" name="password" id="password" value="123456"/>
-	</form>
-</div>
+<div style="" class="page-body">
 
-<div>
-	<div class="item-panel">
-		<p class="item">
-			<label>研发</label>
-			<a onclick="submitLogin('hb_test_user_yanfa@911.com')" href="javascript:void(0);">hb_test_user_yanfa@911.com</a>
-		</p>
-	</div>
-	
-	<div class="item-panel">
-		<p class="item">
-			<label>BOM</label>
-			<a onclick="submitLogin('hb_test_user_bom@911.com')" href="javascript:void(0);">hb_test_user_bom@911.com</a>
-		</p>
-	</div>
-	
-	<div class="item-panel">
-		<p class="item">
-			<label>产品经理</label>
-			<a onclick="submitLogin('hb_test_user_pm@911.com')" href="javascript:void(0);">hb_test_user_pm@911.com</a>
-		</p>
-		<p class="item">
-			<label>产品总监</label>
-			<a onclick="submitLogin('hb_test_user_cpo@911.com')" href="javascript:void(0);">hb_test_user_cpo@911.com</a>
-		</p>
-		<p class="item">
-			<label>产品</label>
-			<a onclick="submitLogin('hb_test_user_changpin@911.com')" href="javascript:void(0);">hb_test_user_changpin@911.com</a>
-		</p>
-	</div>
-	
-	<div class="item-panel">
-		<p class="item">
-			<label>财务</label>
-			<a onclick="submitLogin('hb_test_user_caiwu@911.com')" href="javascript:void(0);">hb_test_user_caiwu@911.com</a>
-		</p>
-	</div>
-	
-	<div class="item-panel">
-		<p class="item">
-			<label>业务</label>
-			<a onclick="submitLogin('hb_test_user_yewu@911.com')" href="javascript:void(0);">hb_test_user_yewu@911.com</a>
-		</p>
-		<p class="item">
-			<label>业务主管</label>
-			<a onclick="submitLogin('hb_test_user_yewuzhuguan@911.com')" href="javascript:void(0);">hb_test_user_yewuzhuguan@911.com</a>
-		</p>
-	</div>
-	
-	<div class="item-panel">
-		<p class="item">
-			<label>PMC</label>
-			<a onclick="submitLogin('hb_test_user_pmc@911.com')" href="javascript:void(0);">hb_test_user_pmc@911.com</a>
-		</p>
-	</div>
-	
-	<div class="item-panel">
-		<p class="item">
-			<label>采购</label>
-			<a onclick="submitLogin('hb_test_user_caigou@911.com')" href="javascript:void(0);">hb_test_user_caigou@911.com</a>
-		</p>
-		<p class="item">
-			<label>采购主管</label>
-			<a onclick="submitLogin('hb_test_user_caigouzhuguan@911.com')" href="javascript:void(0);">hb_test_user_caigouzhuguan@911.com</a>
-		</p>
-	</div>
-	
-	<div class="item-panel">
-		<p class="item">
-			<label>仓库</label>
-			<a onclick="submitLogin('hb_test_user_cangku@911.com')" href="javascript:void(0);">hb_test_user_cangku@911.com</a>
-		</p>
-		<p class="item">
-			<label>仓库主管</label>
-			<a onclick="submitLogin('hb_test_user_cangkuzhuguan@911.com')" href="javascript:void(0);">hb_test_user_cangkuzhuguan@911.com</a>
-		</p>
-	</div>
-	
-	<div class="item-panel">
-		<p class="item">
-			<label>工厂</label>
-			<a onclick="submitLogin('hb_test_user_gongchang@911.com')" href="javascript:void(0);">hb_test_user_gongchang@911.com</a>
-		</p>
-	</div>
-	
-	<div class="item-panel">
-		<p class="item">
-			<label>测试用户</label>
-			<a onclick="submitLogin('hb_test_user_test@911.com')" href="javascript:void(0);">hb_test_user_test@911.com</a>
-		</p>
-		<p class="item">
-			<label>管理员</label>
-			<a onclick="submitLogin('hb_test_user_00@911.com')" href="javascript:void(0);">hb_test_user_00@911.com</a>
-		</p>
-	</div>
-</div>
+<div style="height:calc(100% - 20px);overflow:auto;">
 
-<ol style="background-color:#ccc;">
-	<li>
-		<a target="_blank" href="http://localhost:8080/moko/index.do">后台</a>
-	</li>
-	<li>
-		<a target="_blank" href="http://localhost:8080/product/product_list">产品管理</a>
-	</li>
-	<li>
-		<a target="_blank" href="http://localhost:8080/product/bom_list">产品BOM</a>
-	</li>
-	<li>
-		<a target="_blank" href="http://localhost:8080/product/product_ecn_list">变更管理</a>
-	</li>
-	<li>
-		<a target="_blank" href="http://localhost:8080/product/product_ecn_list">产品分类管理</a>
-	</li>
-	<li>
-		<a target="_blank" href="http://localhost:8080/provided_by_customer_follow/list">客供物料跟进表</a>
-	</li>
-	<li>
-		<a target="_blank" href="http://rtest2.mokotechnology.com/pi_infos">ruby PI管理</a>
-	</li>
-	<li>
-		<a target="_blank" href="http://localhost:8080/pi_infos/stay_bom_audit">java PI管理</a>
-	</li>
-	<li>
-		<a target="_blank" href="http://localhost:8080/pi_info/view_pi_progress?piId=210">PI进度跟踪 210</a><br/>
-		<a target="_blank" href="http://localhost:8080/pi_info/view_pi_progress?piId=211">PI进度跟踪 211</a><br/>
-		<a target="_blank" href="http://localhost:8080/pi_info/view_pi_progress?piId=212">PI进度跟踪 212</a><br/>
-	</li>
-	<li>
-		<a target="_blank" href="http://localhost:8080/pi_product_follow/list">PI成品跟进</a>
-	</li>
-	<li>
-		<a target="_blank" href="http://localhost:8080/inquirer/bom_list">java询价管理</a>
-	</li>
-	<li>
-		<a target="_blank" href="http://localhost:8080/supplement_apply/list">生产补料</a>
-	</li>
-	<li>
-		<a target="_blank" href="http://localhost:8080/outsourcing_input/list">外购入库</a>
-	</li>
-	<li>
-		<a target="_blank" href="http://localhost:8080/stock_query/detail?id=34891&page=100">库存变化明细 34891 11020000101451</a>
-	</li>
-	<li>
-		<a target="_blank" href="http://localhost:8080/material_release/list">释放物料</a>
-	</li>
-</ol>
+	<div>
+		<form id="form" target="_blank" action="" method="post">
+			<input type="text" name="username" id="username"/>
+			<input type="text" name="password" id="password" value="123456"/>
+		</form>
+		<input type="text" id="server-port" onchange="updateBaseUrl(this);" value="8080"/>
+	</div>
+
+	<div>
+		<div class="item-panel">
+			<p class="item">
+				<label>研发</label>
+				<a onclick="submitLogin('hb_test_user_yanfa@911.com')" href="javascript:void(0);">hb_test_user_yanfa@911.com</a>
+			</p>
+		</div>
+		
+		<div class="item-panel">
+			<p class="item">
+				<label>BOM</label>
+				<a onclick="submitLogin('hb_test_user_bom@911.com')" href="javascript:void(0);">hb_test_user_bom@911.com</a>
+			</p>
+		</div>
+		
+		<div class="item-panel">
+			<p class="item">
+				<label>产品经理</label>
+				<a onclick="submitLogin('hb_test_user_pm@911.com')" href="javascript:void(0);">hb_test_user_pm@911.com</a>
+			</p>
+			<p class="item">
+				<label>产品总监</label>
+				<a onclick="submitLogin('hb_test_user_cpo@911.com')" href="javascript:void(0);">hb_test_user_cpo@911.com</a>
+			</p>
+			<p class="item">
+				<label>产品</label>
+				<a onclick="submitLogin('hb_test_user_changpin@911.com')" href="javascript:void(0);">hb_test_user_changpin@911.com</a>
+			</p>
+		</div>
+		
+		<div class="item-panel">
+			<p class="item">
+				<label>财务</label>
+				<a onclick="submitLogin('hb_test_user_caiwu@911.com')" href="javascript:void(0);">hb_test_user_caiwu@911.com</a>
+			</p>
+		</div>
+		
+		<div class="item-panel">
+			<p class="item">
+				<label>业务</label>
+				<a onclick="submitLogin('hb_test_user_yewu@911.com')" href="javascript:void(0);">hb_test_user_yewu@911.com</a>
+			</p>
+			<p class="item">
+				<label>业务主管</label>
+				<a onclick="submitLogin('hb_test_user_yewuzhuguan@911.com')" href="javascript:void(0);">hb_test_user_yewuzhuguan@911.com</a>
+			</p>
+		</div>
+		
+		<div class="item-panel">
+			<p class="item">
+				<label>PMC</label>
+				<a onclick="submitLogin('hb_test_user_pmc@911.com')" href="javascript:void(0);">hb_test_user_pmc@911.com</a>
+			</p>
+		</div>
+		
+		<div class="item-panel">
+			<p class="item">
+				<label>采购</label>
+				<a onclick="submitLogin('hb_test_user_caigou@911.com')" href="javascript:void(0);">hb_test_user_caigou@911.com</a>
+			</p>
+			<p class="item">
+				<label>采购主管</label>
+				<a onclick="submitLogin('hb_test_user_caigouzhuguan@911.com')" href="javascript:void(0);">hb_test_user_caigouzhuguan@911.com</a>
+			</p>
+		</div>
+		
+		<div class="item-panel">
+			<p class="item">
+				<label>仓库</label>
+				<a onclick="submitLogin('hb_test_user_cangku@911.com')" href="javascript:void(0);">hb_test_user_cangku@911.com</a>
+			</p>
+			<p class="item">
+				<label>仓库主管</label>
+				<a onclick="submitLogin('hb_test_user_cangkuzhuguan@911.com')" href="javascript:void(0);">hb_test_user_cangkuzhuguan@911.com</a>
+			</p>
+		</div>
+		
+		<div class="item-panel">
+			<p class="item">
+				<label>工厂</label>
+				<a onclick="submitLogin('hb_test_user_gongchang@911.com')" href="javascript:void(0);">hb_test_user_gongchang@911.com</a>
+			</p>
+		</div>
+		
+		<div class="item-panel">
+			<p class="item">
+				<label>测试用户</label>
+				<a onclick="submitLogin('hb_test_user_test@911.com')" href="javascript:void(0);">hb_test_user_test@911.com</a>
+			</p>
+			<p class="item">
+				<label>管理员</label>
+				<a onclick="submitLogin('hb_test_user_00@911.com')" href="javascript:void(0);">hb_test_user_00@911.com</a>
+			</p>
+		</div>
+	</div>
+
+	<ol style="background-color:#ccc;">
+		<li>
+			<a target="_blank" href="javascript:openUrl('moko/index.do')">后台</a>
+		</li>
+		<li>
+			<a target="_blank" href="javascript:openUrl('product/product_list')">产品管理</a>
+		</li>
+		<li>
+			<a target="_blank" href="javascript:openUrl('product/bom_list')">产品BOM</a>
+		</li>
+		<li>
+			<a target="_blank" href="javascript:openUrl('product/product_ecn_list')">变更管理</a>
+		</li>
+		<li>
+			<a target="_blank" href="javascript:openUrl('product/product_ecn_list')">产品分类管理</a>
+		</li>
+		<li>
+			<a target="_blank" href="javascript:openUrl('provided_by_customer_follow/list')">客供物料跟进表</a>
+		</li>
+		<li>
+			<a target="_blank" href="http://rtest2.mokotechnology.com/pi_infos')">ruby PI管理</a>
+		</li>
+		<li>
+			<a target="_blank" href="javascript:openUrl('pi_infos/stay_bom_audit')">java PI管理</a>
+		</li>
+		<li>
+			<a target="_blank" href="javascript:openUrl('pi_info/view_pi_progress?piId=210')">PI进度跟踪 210</a><br/>
+			<a target="_blank" href="javascript:openUrl('pi_info/view_pi_progress?piId=211')">PI进度跟踪 211</a><br/>
+			<a target="_blank" href="javascript:openUrl('pi_info/view_pi_progress?piId=212')">PI进度跟踪 212</a><br/>
+		</li>
+		<li>
+			<a target="_blank" href="javascript:openUrl('pi_product_follow/list')">PI成品跟进</a>
+		</li>
+		<li>
+			<a target="_blank" href="javascript:openUrl('inquirer/bom_list')">java询价管理</a>
+		</li>
+		<li>
+			<a target="_blank" href="javascript:openUrl('supplement_apply/list')">生产补料</a>
+		</li>
+		<li>
+			<a target="_blank" href="javascript:openUrl('outsourcing_input/list')外购入库</a>
+		</li>
+		<li>
+			<a target="_blank" href="javascript:openUrl('stock_query/detail?id=34891&page=100')">库存变化明细 34891 11020000101451</a>
+		</li>
+		<li>
+			<a target="_blank" href="javascript:openUrl('material_release/list')">释放物料</a>
+		</li>
+		<li>
+			localhost:8080/<input id="uri-suffix" style="width:400px;"/><a target="_blank" onclick="toLocal()" href="javascript:void(0);">toLocal</a>
+		</li>
+	</ol>
+
+	<ol class="stream" style="margin-top:5px;background-color:#ccc;">
+		<li class="stream-item">
+			<span class="stream-item-title">业务</span>
+			新建询价
+			<a onclick="loginAndRedirect('hb_test_user_yewu@911.com', 'inquirer/order_list')" href="javascript:void(0);">&gt;&gt;</a>
+		</li>
+		<li class="stream-item">
+			<span class="stream-item-title">BOM</span>
+			造BOM
+			<a onclick="loginAndRedirect('hb_test_user_bom@911.com', 'inquirer/order_list')" href="javascript:void(0);">&gt;&gt;</a>
+		</li>
+		<li class="stream-item">
+			<span class="stream-item-title">采购主管</span>
+			<a target="_blank" href="javascript:openUrl('inquirer/bom_list')">报价并审核</a>
+			<a onclick="loginAndRedirect('hb_test_user_caigouzhuguan@911.com', 'inquirer/bom_list')" href="javascript:void(0);">&gt;&gt;</a>
+		</li>
+		<li class="stream-item">
+			<span class="stream-item-title">业务</span>
+			新建PI
+			<a onclick="loginAndRedirect('hb_test_user_yewu@911.com', '')" href="javascript:void(0);">&gt;&gt;</a>
+		</li>
+		<li class="stream-item">
+			<span class="stream-item-title">BOM</span>
+			审核/原始BOM
+			<a onclick="loginAndRedirect('hb_test_user_bom@911.com', 'pi_infos/stay_bom_audit')" href="javascript:void(0);">&gt;&gt;</a>
+		</li>
+		<li class="stream-item">
+			<span class="stream-item-title">业务</span>
+			下推PI
+			<a onclick="loginAndRedirect('hb_test_user_yewu@911.com', '')" href="javascript:void(0);">&gt;&gt;</a>
+		</li>
+		<li class="stream-item">
+			<span class="stream-item-title">业务主管</span>
+			审核PI
+			<a onclick="loginAndRedirect('hb_test_user_yewuzhuguan@911.com', '')" href="javascript:void(0);">&gt;&gt;</a>
+		</li>
+		<li class="stream-item">
+			<span class="stream-item-title">财务</span>
+			审核PI
+			<a onclick="loginAndRedirect('hb_test_user_caiwu@911.com', '')" href="javascript:void(0);">&gt;&gt;</a>
+		</li>
+		<li class="stream-item">
+			<span class="stream-item-title">PMC</span>
+			分料->审核
+			<a onclick="loginAndRedirect('hb_test_user_pmc@911.com', '')" href="javascript:void(0);">&gt;&gt;</a>
+		</li>
+		<li class="stream-item">
+			<span class="stream-item-title">采购</span>
+			新建采购单
+			<a onclick="loginAndRedirect('hb_test_user_caigou@911.com', '')" href="javascript:void(0);">&gt;&gt;</a>
+		</li>
+		<li class="stream-item">
+			<span class="stream-item-title">仓库</span>
+			入库前打印物料标签/新建外购入库
+			<a onclick="loginAndRedirect('hb_test_user_cangku@911.com', '')" href="javascript:void(0);">&gt;&gt;</a>
+		</li>
+		<li class="stream-item">
+			<span class="stream-item-title">仓库主管</span>
+			审核入库单
+			<a onclick="loginAndRedirect('hb_test_user_cangkuzhuguan@911.com', '')" href="javascript:void(0);">&gt;&gt;</a>
+		</li>
+		<li class="stream-item">
+			<span class="stream-item-title">仓库</span>
+			生产领料
+			<a onclick="loginAndRedirect('hb_test_user_cangku@911.com', '')" href="javascript:void(0);">&gt;&gt;</a>
+		</li>
+		<li class="stream-item">
+			<span class="stream-item-title">仓库</span>
+			生产入库
+			<a onclick="loginAndRedirect('hb_test_user_cangku@911.com', '')" href="javascript:void(0);">&gt;&gt;</a>
+		</li>
+		<li class="stream-item">
+			<span class="stream-item-title">业务</span>
+			推发货通知单
+			<a onclick="loginAndRedirect('hb_test_user_yewu@911.com', '')" href="javascript:void(0);">&gt;&gt;</a>
+		</li>
+		<li class="stream-item">
+			<span class="stream-item-title">财务</span>
+			审核发货通知单
+			<a onclick="loginAndRedirect('hb_test_user_caiwu@911.com', '')" href="javascript:void(0);">&gt;&gt;</a>
+		</li>
+		<li class="stream-item">
+			<span class="stream-item-title">仓库</span>
+			新建出库单
+			<a onclick="loginAndRedirect('hb_test_user_cangku@911.com', '')" href="javascript:void(0);">&gt;&gt;</a>
+		</li>
+	</ol>
+
+
+	<div id="hide-panel" style="width:0px;height:0px;position:absolute;overflow:hidden;">
+		<form id="hide-form" target="hideIframe" method="post" action="">
+			<input type="text" name="username" />
+			<input type="text" name="password" value="123456"/>
+		</form>
+		<iframe id="hide-iframe" name="hideIframe"></iframe>
+	</div>
+	
+</div>
+</div>
 
 </body>
 </html>

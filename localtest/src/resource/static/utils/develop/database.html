@@ -133,9 +133,21 @@
 			var str = JSON.stringify(this.tableList);
 			var url = window.URL.createObjectURL(new Blob([str]));
 			var a = document.createElement("a");
-			a.download = "table.json";
+			a.download = "table_" + (new Date().toJSON()) + ".json";
 			a.href=url;
 			a.click();
+			
+			this.persistStorage();
+		},
+		persistStorage:function(){
+			var str = JSON.stringify(this.tableList);
+			window.localStorage.setItem("develop-database-data", str);
+		},
+		loadStorage:function(){
+			var str = window.localStorage.getItem("develop-database-data");
+			if(str && str.length){
+				pageData.tableListFromText(str);
+			}
 		},
 		getVueTableList:function(){
 			return pageVue.$data.tableList;
@@ -281,6 +293,12 @@
 			}
 		}
 	});
+	
+	pageData.loadStorage();
+	setInterval(function(){
+		pageData.persistStorage();
+	}, 1000);
+	
 </script>
 
 

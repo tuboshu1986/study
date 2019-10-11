@@ -13,7 +13,7 @@
 
 <body>
 	<div id="work-page" class="page-body">
-		<div>
+		<div v-show="ctl.showAddPanel">
 			<P class="field-item">
 				名称：
 				<label class="grey-inline-box">
@@ -22,10 +22,18 @@
 				</label>
 			</P>
 			<P class="field-item">
-				<label><input checked type="checkbox"/>PI流程</label>
+				<label><input v-model="ctl.checkedtemplate" value="piStream" name="checkedtemplate" type="radio"/>PI流程</label>
+				<label><input v-model="ctl.checkedtemplate" value="oneOpt" name="checkedtemplate" type="radio"/>一个流程</label>
 			</P>
 			<P class="field-item">
 				<input @click="createWork" type="button" value="✔" class="button default-button"/>
+				<a @click="closeAddPanel" href="javascript:void(0);" title="关闭新增框">隐藏</a>
+			</P>
+		</div>
+	
+		<div>
+			<P class="field-item">
+				<a @click="openAddPanel" class="a-simple-button" href="javascript:void(0);" title="打开新增框">+</a>
 				<a @click="clearChecked" class="a-simple-button" href="javascript:void(0);" title="取消选中">c</a>
 				<a @click="persist" class="a-simple-button" href="javascript:void(0);" title="保存">s</a>
 				<a @click="loadData" class="a-simple-button" href="javascript:void(0);" title="加载">o</a>
@@ -35,19 +43,34 @@
 		</div>
 		
 		<div id="work-panel" style="height:calc(100% - 65px);overflow:auto;">
-			<dl class="card-panel" v-for="(w,i) in workList" :class="{'checked-card':w.checked}">
+			<dl class="card-panel" v-for="(w,i) in workList" :class="{'checked-card':w.checked}" style="width:90vw;">
 				<dt class="card-title">
 					{{workList.length - i}}. {{w.workName}}
-					<label class="card-checkbox">
-						<input @change="singleCheck(i)" v-model="w.checked" type="checkbox"/>
-					</label>
-				</dt>
-				<dd class="card-content" style="max-height:none;">
-					<p v-for="field in w.fieldList" style="margin:5px 10px;">
-						<label>
-							<span style="display:inline-block;width:80px;">{{field.title}}</span>: <input v-model.trim="field.value" class="field"/>
+					
+					<span class="card-opt">
+						<a @click="addFieldToWork(i)" href="javascript:void(0);" class="a-simple-button">+</a>
+						<a @click="clearWork(i)" href="javascript:void(0);" class="a-simple-button">c</a>
+						<a @click="removeWork(i)" href="javascript:void(0);" class="a-simple-button">x</a>
+						<label class="card-checkbox">
+							<input @change="singleCheck(i)" v-model="w.checked" type="checkbox"/>
 						</label>
-					</p>
+					</span>
+				</dt>
+				<dd class="card-content" style="max-height:450px;">
+					<div v-for="(field, fieldIndex) in w.fieldList" class="card-content-p">
+						<span style="display:inline-block;width:100px;">{{field.title}}</span>: 
+						<div class="content-value">
+							<template v-for="vindex in field.value.length">
+								<label class="content-value-item">
+									<input v-model.trim="field.value[vindex-1]" class="field"/>
+									<a @click="appendValueInput(i, fieldIndex, vindex-1)" href="javascript:void(0);" class="a-simple-button" title="添加条目">+</a>
+									<a @click="removeValueInput(i, fieldIndex, vindex-1)" href="javascript:void(0);" class="a-simple-button" title="删除条目">x</a>
+									<a @click="clearValueInput(i, fieldIndex, vindex-1)" href="javascript:void(0);" class="a-simple-button" title="清除内容">c</a>
+									<a @click="commentValueInput(i, fieldIndex, vindex-1)" href="javascript:void(0);" class="a-simple-button" title="注释">t</a>
+								</label>
+							</template>
+						</div>
+					</div>
 				</dd>
 			</dl>
 		</div>
@@ -62,9 +85,76 @@ var workPageVue = new Vue({
 		formDate:{
 			workName:""
 		},
-		workList:[]
+		workList:[],
+		ctl:{
+			checkedtemplate:"piStream",
+			showAddPanel:false
+		}
+	},
+	watch:{
+		workList:function(){
+			
+		}
 	},
 	methods:{
+		closeAddPanel:function(){
+			this.ctl.showAddPanel = false;
+		},
+		openAddPanel:function(){
+			this.ctl.showAddPanel = true;
+		},
+		addFieldToWork:function(index){
+			var currItem = this.workList[index];
+			var title = prompt("输入标题");
+			if(title && (title = title.trim())){
+				currItem.fieldList.push({
+					title: title,
+					value: [""]
+				});
+			}
+		},
+		removeValueInput:function(index, fieldIndex, vindex){
+			var currItem = this.workList[index]; 
+			if(currItem.fieldList[fieldIndex].value.length > 1){
+				currItem.fieldList[fieldIndex].value.splice(vindex, 1);
+			}else{
+				if(confirm("delete?")){
+					currItem.fieldList.splice(fieldIndex, 1);
+				}
+			}
+		},
+		clearValueInput:function(index, fieldIndex, vindex){
+			var currItem = this.workList[index]; 
+			currItem.fieldList[fieldIndex].value[vindex] = "";
+			this.$forceUpdate();
+			
+			event.target.parentNode.querySelector("input").focus();
+		},
+		commentValueInput:function(index, fieldIndex, vindex){
+			var currItem = this.workList[index];
+			var com = prompt("");
+			com = com ? com.trim() : com;
+			if(com){
+				currItem.fieldList[fieldIndex].title[vindex] = com;
+			}
+		},
+		appendValueInput:function(index, fieldIndex, vindex){
+			var currItem = this.workList[index]; 
+			currItem.fieldList[fieldIndex].value.splice(vindex + 1, 0, "");
+		},
+		clearWork:function(index){
+			if(confirm("delete?")){
+				var currItem = this.workList[index];
+				currItem.fieldList.forEach(function(item){
+					item.value.splice(0, item.value.length, "");
+				});
+			}
+		},
+		removeWork:function(index){
+			if(confirm("delete?")){
+				this.workList.splice(index, 1);
+			}
+		},
 		singleCheck:function(index){
 			var currItem = this.workList[index];
 			if(currItem.checked){
@@ -98,6 +188,8 @@ var workPageVue = new Vue({
 			a.download = "work_" + new Date().toJSON() + ".json";
 			a.href=window.URL.createObjectURL(new Blob([data]));
 			a.click();
+			
+			window.localStorage.setItem("local-work-list", data);
 		},
 		loadData:function(){
 			var that = this;
@@ -107,17 +199,21 @@ var workPageVue = new Vue({
 				var file = input.files[0];
 				var reader = new FileReader();
 				reader.onload = function(){
-					var arr = JSON.parse(this.result);
-					if(arr && arr.length > 0){
-						that.$data.workList.slice(0, that.$data.workList.length);
-						arr.forEach(item => {
-							that.$data.workList.push(item);
-						});
-					}
+					that.setData(this.result);
 				};
 				reader.readAsText(file);
 			});
 			input.click();
+		},
+		setData:function(dataStr){
+			var that = this;
+			var arr = JSON.parse(dataStr);
+			if(arr && arr.length > 0){
+				that.$data.workList.slice(0, that.$data.workList.length);
+				arr.forEach(item => {
+					that.$data.workList.push(item);
+				});
+			}
 		},
 		clearChecked:function(){
 			this.workList.forEach(function(item){
@@ -125,29 +221,93 @@ var workPageVue = new Vue({
 			});
 		},
 		createWork:function(){
-			if(!this.formDate.workName){
-				this.formDate.workName = "测试";
+			var workName = "";
+			if(this.formDate.workName){
+				workName = this.formDate.workName;
+				this.formDate.workName = "";
 			}
-			this.workList.splice(0, 0, {
-				workName:this.formDate.workName,
-				checked:false,
-				fieldList:[
-					{title:"询价单号",value:""}, 
-					{title:"询价子单号",value:""}, 
-					{title:"PI组号",value:""}, 
-					{title:"PI号",value:""}, 
-					{title:"BOM号",value:""}, 
-					{title:"MOKO号",value:""}, 
-					{title:"入库单号",value:""}, 
-					{title:"领料单号",value:""}, 
-					{title:"采购单号",value:""}, 
-					{title:"补料号",value:""}
-				]
-			});
+			
+			var tempName = this.ctl.checkedtemplate;
+			if(tempName){
+				var tempIns = templateList[tempName].apply(this);
+				if(workName){
+					tempIns.workName = tempIns.workName + "_" + workName;
+				}
+				this.workList.splice(0, 0, tempIns);
+			}
 		}
+	},
+	created:function(){
+		var dataStr = window.localStorage.getItem("local-work-list");
+		this.setData(dataStr);
 	}
 });
 
+
+setInterval(function(){
+	var data = JSON.stringify(workPageVue.$data.workList);
+	window.localStorage.setItem("local-work-list", data);
+}, 1000);
+
+
+var templateList = {
+	"piStream" : function(){
+		return {
+			workName:"PI流程",
+			checked:false,
+			fieldList:[
+				{title:"询价单号",value:[""]}, 
+				{title:"询价子单号",value:[""]},  
+				{title:"询价BOM号",value:[""]}, 
+				{title:"PI组号",value:[""]}, 
+				{title:"PI号",value:[""]}, 
+				{title:"BOM号",value:[""]}, 
+				{title:"MOKO号",value:[""]}, 
+				{title:"入库单号",value:[""]}, 
+				{title:"领料单号",value:[""]}, 
+				{title:"采购单号",value:[""]}, 
+				{title:"补料号",value:[""]}
+			]
+		};
+	},
+	"oneOpt" : function(){
+		return {
+			workName:"一个流程",
+			checked:false,
+			fieldList:[
+				{title:"链接",value:[""]}, 
+				{title:"controller方法",value:[""]},
+				{title:"页面",value:[""]},  
+				{title:"页面查询",value:[""]}, 
+				{title:"实体",value:[""]},  
+				{title:"业务方法",value:[""]}, 
+				{title:"dao方法",value:[""]}
+			]
+		};
+	}
+};
+
 </script>
+
+<style>
+	.content-value-item{
+		display:inline-block;
+		margin-bottom:5px;
+		width: 100%;
+	}
+	
+	.content-value-item:hover input{
+		border-color:rgba(0,255,0,0.2);
+	}
+	
+	.content-value-item:last-child{
+		margin-bottom:0px;
+	}
+	
+	#work-panel input.field{
+		width:calc(100% - 150px);
+	}
+	
+</style>
 
 </html>
