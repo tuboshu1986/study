@@ -12,7 +12,7 @@
 
 <body>
 	<div id="table-list" class="page-body">
-		<div v-show="ctl.showAddPanel">
+		<div v-show="ctl.showAddPanel" style="border:1px solid #ccc;">
 			<P class="field-item">
 				表名：
 				<label class="grey-inline-box">
@@ -32,6 +32,13 @@
 				<label class="grey-inline-box">
 					<input v-model.trim="formData.className" class="field none-field"/>
 					<a class="a-simple-button" @click="formData.className=''" href="javascript:void(0);">x</a>
+				</label>
+			</P>
+			<P class="field-item">
+				备注：
+				<label class="grey-inline-box">
+					<textarea v-model.trim="formData.remarks" class="field none-field"></textarea>
+					<a class="a-simple-button" @click="formData.remarks=''" href="javascript:void(0);">x</a>
 				</label>
 			</P>
 			<P class="field-item">
@@ -69,14 +76,106 @@
 						</td>
 						<td width="40px">{{i+1}}</td>
 						<td width="">
-							<a @click="showTable(i)" href="javascript:void(0);">{{t.tableName}}</a>
+							<a @click="showTable(t.tableName)" href="javascript:void(0);">{{t.tableName}}</a>
 						</td>
 						<td width="200px">{{t.tableCommon}}</td>
 						<td width="200px">{{t.className}}</td>
+						<td width="200px">
+							<a @click="showRemarks(t.tableName)" href="javascript:void(0);" class="a-simple-button" title="查看备注">r</a>
+							<a @click="removeTableInfo(t.tableName)" href="javascript:void(0);" class="a-simple-button" title="删除信息">x</a>
+						</td>
 					</tr>
 				</tbody>
 			</table>
 		</div>
+		
+		<dialog id="table-info-panel">
+			<div id="table-info-head">
+				<label>表详情<span v-if="tableInfo && tableInfo.tableName">({{tableInfo.tableName}})<span></span></label>
+				
+				<label class="operation">
+					<a onclick="document.getElementById('table-info-panel').close()" href="javascript:void(0);" style="vertical-align:unset;" class="a-simple-button" title="关闭">x</a>
+				</label>
+			</div>
+			<div id="table-info-body">
+				<ol>
+					<li class="column-info" v-for="(column, index) in tableInfo.columns">
+						<P class="field-item">
+							<label class="grey-inline-box">
+								<input v-model="column.name" class="field none-field" style="width:200px;" placeholder="名称"/>
+								<a class="a-simple-button" @click="column.name=''" href="javascript:void(0);">x</a>
+							</label>
+						</P>
+						<P class="field-item">
+							<label class="grey-inline-box">
+								<input v-model="column.nameZh" class="field none-field" style="width:200px;" placeholder="名称"/>
+								<a class="a-simple-button" @click="column.nameZh=''" href="javascript:void(0);">x</a>
+							</label>
+						</P>
+						<P class="field-item">
+							<label class="grey-inline-box">
+								<input v-model="column.type" class="field none-field" style="width:200px;" placeholder="名称"/>
+								<a class="a-simple-button" @click="column.type=''" href="javascript:void(0);">x</a>
+							</label>
+						</P>
+						<P class="field-item">
+							<label class="grey-inline-box">
+								<input v-model="column.comment" class="field none-field" style="width:200px;" placeholder="名称"/>
+								<a class="a-simple-button" @click="column.comment=''" href="javascript:void(0);">x</a>
+							</label>
+						</P>
+						<P class="field-item">
+							<label class="grey-inline-box">
+								<input v-model="column.remarks" class="field none-field" style="width:200px;" placeholder="名称"/>
+								<a class="a-simple-button" @click="column.remarks=''" href="javascript:void(0);">x</a>
+							</label>
+						</P>
+						<P class="field-item">
+							<a @click="removeColumn(index)" class="a-simple-button" href="javascript:void(0);" title="删除列">x</a>
+						</P>
+					</li>
+					
+					<li class="column-info-add">
+						<P class="field-item">
+							<label class="grey-inline-box">
+								<input v-model.trim="columnParams.name" class="field none-field" style="width:200px;" placeholder="名称"/>
+								<a class="a-simple-button" @click="columnParams.name=''" href="javascript:void(0);">x</a>
+							</label>
+						</P>
+						<P class="field-item">
+							<label class="grey-inline-box">
+								<input v-model.trim="columnParams.nameZh" class="field none-field" style="width:200px;" placeholder="中文"/>
+								<a class="a-simple-button" @click="columnParams.nameZh=''" href="javascript:void(0);">x</a>
+							</label>
+						</P>
+						<P class="field-item">
+							<label class="grey-inline-box">
+								<input v-model.trim="columnParams.type" class="field none-field" style="width:200px;" placeholder="类型"/>
+								<a class="a-simple-button" @click="columnParams.type=''" href="javascript:void(0);">x</a>
+							</label>
+						</P>
+						<P class="field-item">
+							<label class="grey-inline-box">
+								<input v-model.trim="columnParams.comment" class="field none-field" style="width:200px;" placeholder="注释"/>
+								<a class="a-simple-button" @click="columnParams.comment=''" href="javascript:void(0);">x</a>
+							</label>
+						</P>
+						<P class="field-item">
+							<label class="grey-inline-box">
+								<input v-model.trim="columnParams.remarks" class="field none-field" style="width:200px;" placeholder="其他"/>
+								<a class="a-simple-button" @click="columnParams.remarks=''" href="javascript:void(0);">x</a>
+							</label>
+						</P>
+						<P class="field-item">
+							<input type="button" @click="saveColumnInfo" value="✔" class="button default-button"/>
+							<a @click="clearColumnParams" href="javascript:void(0);" title="清空输入">清空</a>
+						</P>
+						
+					</li>
+				</ol>
+			</div>
+		</dialog>
+		
 	</div>
 </body>
 
@@ -162,9 +261,23 @@
 		appendData:function(obj){
 			var oldData = this.getByName(obj.tableName);
 			if(oldData){
+				if(!oldData.hasOwnProperty("remarks")){
+					oldData.remarks = "";
+				}
 				ManagerGlobalObjectUtils.copyPropertiesThorough(obj, oldData);
 			}else{
 				this.tableList.push(obj);
+				this.resetVueList(this.getVueTableList(), this.getCondition());
+			}
+		},
+		removeByName:function(tableName){
+			var index = this.tableList.findIndex(item => {
+				if(tableName == item.tableName)
+					return true;
+				return false;
+			});
+			if(index > -1){
+				this.tableList.splice(index, 1);
 				this.resetVueList(this.getVueTableList(), this.getCondition());
 			}
 		},
@@ -218,10 +331,19 @@
 				database:"erp-test",
 				tableName:"",
 				tableCommon:"",
-				className:""
+				className:"",
+				remarks:""
 			},
 			condition:{
 				tableName:""
+			},
+			tableInfo:{},
+			columnParams:{
+				name:"",
+				nameZh:"",
+				type:"",
+				comment:"",
+				remarks:""
 			},
 			tableList:[],
 			ctl:{
@@ -231,16 +353,41 @@
 			}
 		},
 		methods:{
-			showTable:function(i){
-				var params = {
-					pageName:"table",
-					opt: {
-						database: this.tableList[i].database,
-						tableName: this.tableList[i].tableName
-					}
-				};
-			
-				localStorage.setItem("parentDoScript", JSON.stringify(params));
+			removeColumn:function(index){
+				this.tableInfo.columns.splice(index, 1);
+			},
+			saveColumnInfo:function(){
+				if(!this.columnParams.name){
+					return;
+				}
+				
+				if(!this.tableInfo.columns){
+					this.tableInfo.columns = [];
+				}
+				
+				var columnParams = {};
+				ManagerGlobalObjectUtils.copyPropertiesThorough(this.columnParams, columnParams);
+				this.clearColumnParams();
+				
+				this.tableInfo.columns.push(columnParams);
+				this.$forceUpdate();
+			},
+			clearColumnParams:function(){
+				ManagerGlobalUtils.clearObject(this.columnParams);
+			},
+			showRemarks:function(tableName){
+				var remarks = pageData.getByName(tableName).remarks;
+				alert(remarks ? remarks : "");
+			},
+			removeTableInfo:function(tableName){
+				if(confirm("delete " + tableName + " ??")){
+					pageData.removeByName(tableName);
+				}
+			},
+			showTable:function(tableName){
+				this.tableInfo = pageData.getByName(tableName);
+				var tableInfoPanel = document.getElementById("table-info-panel");
+				tableInfoPanel.showModal();
 			},
 			beginEdit:function(){
 				if(this.ctl.editable == true){
@@ -301,5 +448,45 @@
 	
 </script>
 
+
+<style>
+	#table-info-panel{
+		width:100vw;
+		height:100vh;
+		border:0px;
+		overflow: hidden;
+	}
+	
+	#table-info-head{
+		height:40px;
+		line-height:40px;
+		position:relative;
+		margin:0px 5px 5px 5px;
+		border-bottom: 1px solid #ccc;
+	}
+	
+	#table-info-head .operation{
+		position:absolute;
+		right:0px;
+		top:0px;
+		height:40px;
+		line-height:40px;
+	}
+	
+	#table-info-body{
+		margin:5px;
+		height:calc(100% - 60px);
+		overflow:auto;
+	}
+	
+	#table-info-body .field-item{
+		margin:0px 0px;
+	}
+	
+	#table-info-body .column-info-add{
+		background-color:rgba(200, 200, 200, 0.3);
+	}
+	
+</style>
 
 </html>

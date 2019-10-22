@@ -23,7 +23,7 @@
 			</P>
 			<P class="field-item">
 				<label><input v-model="ctl.checkedtemplate" value="piStream" name="checkedtemplate" type="radio"/>PI流程</label>
-				<label><input v-model="ctl.checkedtemplate" value="oneOpt" name="checkedtemplate" type="radio"/>一个流程</label>
+				<label><input v-model="ctl.checkedtemplate" value="oneOpt" name="checkedtemplate" type="radio"/>一个页面</label>
 			</P>
 			<P class="field-item">
 				<input @click="createWork" type="button" value="✔" class="button default-button"/>
@@ -32,6 +32,17 @@
 		</div>
 	
 		<div>
+			<P class="field-item">
+				名称：
+				<label class="grey-inline-box">
+					<input v-model="search.workName" class="field none-field"/>
+					<a @click="search.workName=''" class="a-simple-button" href="javascript:void(0);">x</a>
+				</label>
+				<label class="grey-inline-box">
+					<input v-model="search.title" class="field none-field"/>
+					<a @click="search.title=''" class="a-simple-button" href="javascript:void(0);">x</a>
+				</label>
+			</P>
 			<P class="field-item">
 				<a @click="openAddPanel" class="a-simple-button" href="javascript:void(0);" title="打开新增框">+</a>
 				<a @click="clearChecked" class="a-simple-button" href="javascript:void(0);" title="取消选中">c</a>
@@ -43,7 +54,7 @@
 		</div>
 		
 		<div id="work-panel" style="height:calc(100% - 65px);overflow:auto;">
-			<dl class="card-panel" v-for="(w,i) in workList" :class="{'checked-card':w.checked}" style="width:90vw;">
+			<dl class="card-panel" v-for="(w,i) in workList" @click="checkWork(i)" :class="{'checked-card':w.checked}" v-show="w.show" style="width:45vw;">
 				<dt class="card-title">
 					{{workList.length - i}}. {{w.workName}}
 					
@@ -57,18 +68,23 @@
 					</span>
 				</dt>
 				<dd class="card-content" style="max-height:450px;">
-					<div v-for="(field, fieldIndex) in w.fieldList" class="card-content-p">
-						<span style="display:inline-block;width:100px;">{{field.title}}</span>: 
-						<div class="content-value">
-							<template v-for="vindex in field.value.length">
-								<label class="content-value-item">
-									<input v-model.trim="field.value[vindex-1]" class="field"/>
-									<a @click="appendValueInput(i, fieldIndex, vindex-1)" href="javascript:void(0);" class="a-simple-button" title="添加条目">+</a>
-									<a @click="removeValueInput(i, fieldIndex, vindex-1)" href="javascript:void(0);" class="a-simple-button" title="删除条目">x</a>
-									<a @click="clearValueInput(i, fieldIndex, vindex-1)" href="javascript:void(0);" class="a-simple-button" title="清除内容">c</a>
-									<a @click="commentValueInput(i, fieldIndex, vindex-1)" href="javascript:void(0);" class="a-simple-button" title="注释">t</a>
-								</label>
-							</template>
+					<div>
+						<div v-for="(field, fieldIndex) in w.fieldList" class="card-content-p">
+							<span style="display:inline-block;width:100px;">{{field.title}}</span>: 
+							<div class="content-value">
+								<template v-for="vindex in field.value.length">
+									<label class="content-value-item">
+										<input v-model.trim="field.value[vindex-1]" class="field"/>
+										<a @click="appendValueInput(i, fieldIndex, vindex-1)" href="javascript:void(0);" class="a-simple-button" title="添加条目">+</a>
+										<a @click="removeValueInput(i, fieldIndex, vindex-1)" href="javascript:void(0);" class="a-simple-button" title="删除条目">x</a>
+										<a @click="clearValueInput(i, fieldIndex, vindex-1)" href="javascript:void(0);" class="a-simple-button" title="清除内容">c</a>
+										
+										<a v-if="vindex == 1" @click="editInputTitle(i, fieldIndex, vindex-1)" href="javascript:void(0);" class="a-simple-button" title="修改标题">t</a>
+										<a v-else @click="appendValueInputByCurr(i, fieldIndex, vindex-1)" href="javascript:void(0);" class="a-simple-button" title="以此创建新条目">n</a>
+										
+									</label>
+								</template>
+							</div>
 						</div>
 					</div>
 				</dd>
@@ -85,6 +101,10 @@ var workPageVue = new Vue({
 		formDate:{
 			workName:""
 		},
+		search:{
+			workName:"",
+			title:""
+		},
 		workList:[],
 		ctl:{
 			checkedtemplate:"piStream",
@@ -92,11 +112,40 @@ var workPageVue = new Vue({
 		}
 	},
 	watch:{
-		workList:function(){
-			
+		"search.workName":function(){
+			this.filterList();
+		},
+		"search.title":function(){
+			this.filterList();
 		}
 	},
 	methods:{
+		filterList:function(){
+			var search = this.search;
+			this.workList.forEach((work) => {
+				if(search.workName){
+					if(work.workName.indexOf(search.workName) == -1){
+						work.show = false;
+						return;
+					}
+				}
+				
+				if(!search.title){
+					work.show = true;
+					return;
+				}
+				var finded = work.fieldList.findIndex(f => {
+					if(f.title.indexOf(search.title) > -1){
+						return true;
+					}
+					return false;
+				});
+				if(finded > -1)
+					work.show = true;
+				else
+					work.show = false;
+			});
+		},
 		closeAddPanel:function(){
 			this.ctl.showAddPanel = false;
 		},
@@ -107,10 +156,17 @@ var workPageVue = new Vue({
 			var currItem = this.workList[index];
 			var title = prompt("输入标题");
 			if(title && (title = title.trim())){
-				currItem.fieldList.push({
-					title: title,
-					value: [""]
-				});
+				var field = templateList.subTemplate.field();
+				field.title = title;
+				currItem.fieldList.push(field);
+			}
+		},
+		editInputTitle:function(index, fieldIndex){
+			var currItem = this.workList[index];
+			var title = prompt("", currItem.fieldList[fieldIndex].title);
+			title = title ? title.trim() : title;
+			if(title){
+				currItem.fieldList[fieldIndex].title = title;
 			}
 		},
 		removeValueInput:function(index, fieldIndex, vindex){
@@ -138,6 +194,24 @@ var workPageVue = new Vue({
 				currItem.fieldList[fieldIndex].title[vindex] = com;
 			}
 		},
+		appendValueInputByCurr:function(index, fieldIndex, vindex){
+			var currItem = this.workList[index];
+			var field = templateList.subTemplate.field();
+			
+			var title = prompt("", currItem.fieldList[fieldIndex].value[vindex]);
+			title = title ? title.trim() : title;
+			if(title){
+				field.title = title;
+			}else{
+				field.title = currItem.fieldList[fieldIndex].value[vindex];
+			}
+			field.value[0] = currItem.fieldList[fieldIndex].value[vindex];
+			field.value[1] = "请求地址：";
+			field.value[2] = "请求方法：";
+			
+			currItem.fieldList.push(field);
+			this.scrollToCardBottom(index);
+		},
 		appendValueInput:function(index, fieldIndex, vindex){
 			var currItem = this.workList[index]; 
 			currItem.fieldList[fieldIndex].value.splice(vindex + 1, 0, "");
@@ -154,6 +228,11 @@ var workPageVue = new Vue({
 			if(confirm("delete?")){
 				this.workList.splice(index, 1);
 			}
+		},
+		checkWork:function(index){
+			var currItem = this.workList[index];
+			currItem.checked = true;
+			this.singleCheck(index);
 		},
 		singleCheck:function(index){
 			var currItem = this.workList[index];
@@ -234,7 +313,16 @@ var workPageVue = new Vue({
 					tempIns.workName = tempIns.workName + "_" + workName;
 				}
 				this.workList.splice(0, 0, tempIns);
+				this.filterList();
 			}
+		},
+		scrollToCardBottom:function(index){
+			var target = event.target;
+			var currCardDD = target.parentNode.parentNode.parentNode.parentNode.parentNode;
+			var currPanel = target.parentNode.parentNode.parentNode.parentNode;
+			this.$nextTick(function(){
+				currCardDD.scrollTop = currPanel.scrollHeight;
+			});
 		}
 	},
 	created:function(){
@@ -251,8 +339,17 @@ setInterval(function(){
 
 
 var templateList = {
+	"subTemplate":{
+		"field":function(){
+			return {
+				title:"询价单号",
+				value:[""]
+			};
+		}
+	},
 	"piStream" : function(){
 		return {
+			show:true,
 			workName:"PI流程",
 			checked:false,
 			fieldList:[
@@ -272,7 +369,8 @@ var templateList = {
 	},
 	"oneOpt" : function(){
 		return {
-			workName:"一个流程",
+			show:true,
+			workName:"一个页面",
 			checked:false,
 			fieldList:[
 				{title:"链接",value:[""]}, 
