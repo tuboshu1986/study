@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>流水</title>
+		
+	<script src="plugins/vue.js" type="text/javascript"></script>
+		
+	<link href="default.css" rel="stylesheet" type="text/css" /> 
+	<script src="plugins/globalUI.js" type="text/javascript"></script>
+	<script src="plugins/DataProxy.js" type="text/javascript"></script>
+</head>
+
+<body>
+	<div id="stream-body" style="background-color:#ccc;height:3000px;" class="page-body">
+		流水
+	</div>
+</body>
+
+<script>
+	var StreamDataProxyStream = new function(fileNameSuf){
+		DataProxy.call(this, fileNameSuf);
+	};
+	StreamDataProxyStream.prototype = new DataProxy();
+	StreamDataProxyStream.prototype.constructor = StreamDataProxyStream;
+	
+	StreamDataProxyStream.prototype.filterRecord = function(record, condition){
+		return true;
+	};
+	
+	StreamDataProxyStream.prototype.emptyRecord = function(){
+		return {
+			createTime: null,
+			createTimeStr: "",
+			title:"",
+			remarks:[]
+		};
+	};
+
+	StreamDataProxyStream.prototype.emptyRemarks = function(){
+		return {
+			createTime: null,
+			createTimeStr: "",
+			content:""
+		};
+	};
+
+	var streamDataProxyStream = new StreamDataProxyStream();
+</script>
+
+<script>
+	var streamVueObjCommon = Object.create(null);
+	
+	streamVueObjCommon.dataProxy = streamDataProxyStream;
+	
+	streamVueObjCommon.resetMainList = function(arr){
+		var filterData = this.dataProxy.filter();
+		this.copyArray(filterData, arr);
+		return arr;
+	};
+	
+	streamVueObjCommon.copyArray = function(from, to){
+		to.splice(0, arr.length);
+		from.forEach(function(item){
+			to.push(item);
+		});
+		return to;
+	};
+	
+</script>
+
+<script>
+	var streamVueObj = new Vue({
+		el: "#stream-body",
+		data: {
+			streamList:streamVueObjCommon.resetMainList([])
+		}
+	});
+</script>
+
+
+</html>
